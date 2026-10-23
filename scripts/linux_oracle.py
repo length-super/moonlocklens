@@ -48,7 +48,10 @@ def main():
     assert hasattr(fcntl, "F_OFD_SETLK"), "OFD locks required for this integration matrix"
     (ROOT / "release-local").mkdir(exist_ok=True)
     summary = {}
-    with tempfile.TemporaryDirectory(prefix="lock-oracle-", dir=ROOT / "release-local") as work:
+    scratch = Path(os.environ.get("MOONLOCKLENS_TEST_TMP", ROOT / "release-local")).resolve()
+    assert scratch.is_relative_to((ROOT / "release-local").resolve()), "scratch must stay under project release-local"
+    scratch.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="lock-oracle-", dir=scratch) as work:
         work = Path(work)
         fds, children, identities = [], [], {}
         try:
@@ -90,7 +93,7 @@ def main():
             for line in selected:
                 m = ROW.match(line)
                 kind, major, minor = identities[int(m[10])]
-                assert kind == m[4]
+                assert kind == m[4], ("filesystem changed lock family", kind, m[4])
                 assert (major, minor) == (int(m[8], 16), int(m[9], 16))
                 python_rows.append((major, minor, int(m[10]), {"POSIX": "Posix", "FLOCK": "Flock", "OFDLCK": "Ofd"}[m[4]],
                                     m[6].title(), m[11], m[12], bool(m[3])))

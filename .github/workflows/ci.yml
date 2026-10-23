@@ -1,0 +1,24 @@
+name: verify
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Install compatible MoonBit
+        run: |
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh -o /tmp/install-moon.sh
+          bash /tmp/install-moon.sh '0.10.15+943464bfa'
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Verify source, real Linux contention and archive consumer
+        run: |
+          mkdir -p release-local
+          python scripts/verify.py
+          python scripts/linux_oracle.py
+          python scripts/verify_package.py
