@@ -1,0 +1,8 @@
+supported_targets = "js"
+
+import {
+  "local/moonlocklens" @locks,
+  "moonbitlang/core/string",
+}
+
+pkgtype(kind: "executable")

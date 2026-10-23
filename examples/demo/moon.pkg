@@ -1,0 +1,5 @@
+import {
+  "local/moonlocklens" @locks,
+}
+
+pkgtype(kind: "executable")

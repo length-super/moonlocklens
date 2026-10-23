@@ -1,0 +1,120 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "local/moonlocklens"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn byte_range(String, String) -> ByteRange raise LockError
+
+pub fn file_key(String) -> FileKey raise LockError
+
+pub fn parse(String, max_chars? : Int, max_records? : Int, max_depth? : Int) -> Snapshot raise LockError
+
+// Errors
+pub suberror LockError {
+  Invalid(line~ : Int, reason~ : String)
+} derive(@debug.Debug)
+pub fn LockError::to_repr(Self) -> @debug.Repr
+
+// Types and methods
+pub(all) struct Bottleneck {
+  holder_line : Int
+  owner : Owner
+  direct_waiters : Int
+  total_waiters : Int
+} derive(Eq, ToJson, @debug.Debug)
+pub fn Bottleneck::equal(Self, Self) -> Bool
+pub fn Bottleneck::not_equal(Self, Self) -> Bool
+pub fn Bottleneck::to_json(Self) -> Json
+pub fn Bottleneck::to_repr(Self) -> @debug.Repr
+
+pub(all) struct ByteRange {
+  start : Int64
+  end : Int64?
+} derive(Eq, @debug.Debug)
+pub fn ByteRange::equal(Self, Self) -> Bool
+pub fn ByteRange::not_equal(Self, Self) -> Bool
+pub fn ByteRange::overlaps(Self, Self) -> Bool raise LockError
+pub fn ByteRange::to_json(Self) -> Json
+pub fn ByteRange::to_repr(Self) -> @debug.Repr
+pub impl ToJson for ByteRange
+
+pub(all) struct Entry {
+  line : Int
+  ordinal : Int64
+  depth : Int
+  kind : LockKind
+  state : String
+  mode : LockMode
+  owner : Owner
+  file : FileKey?
+  range : ByteRange
+  parent_line : Int?
+} derive(Eq, ToJson, @debug.Debug)
+pub fn Entry::equal(Self, Self) -> Bool
+pub fn Entry::not_equal(Self, Self) -> Bool
+pub fn Entry::to_json(Self) -> Json
+pub fn Entry::to_repr(Self) -> @debug.Repr
+
+pub(all) struct FileKey {
+  major : UInt
+  minor : UInt
+  inode : UInt64
+} derive(Eq, @debug.Debug)
+pub fn FileKey::equal(Self, Self) -> Bool
+pub fn FileKey::not_equal(Self, Self) -> Bool
+pub fn FileKey::to_json(Self) -> Json
+pub fn FileKey::to_repr(Self) -> @debug.Repr
+pub impl ToJson for FileKey
+
+pub(all) enum LockKind {
+  Posix
+  Flock
+  Ofd
+  Lease
+  Other(String)
+} derive(Eq, ToJson, @debug.Debug)
+pub fn LockKind::equal(Self, Self) -> Bool
+pub fn LockKind::not_equal(Self, Self) -> Bool
+pub fn LockKind::to_json(Self) -> Json
+pub fn LockKind::to_repr(Self) -> @debug.Repr
+
+pub(all) enum LockMode {
+  Read
+  Write
+  Unlock
+  Other(String)
+} derive(Eq, ToJson, @debug.Debug)
+pub fn LockMode::equal(Self, Self) -> Bool
+pub fn LockMode::not_equal(Self, Self) -> Bool
+pub fn LockMode::to_json(Self) -> Json
+pub fn LockMode::to_repr(Self) -> @debug.Repr
+
+pub(all) enum Owner {
+  Process(Int)
+  OpenDescription
+  NotVisible
+} derive(Eq, ToJson, @debug.Debug)
+pub fn Owner::equal(Self, Self) -> Bool
+pub fn Owner::not_equal(Self, Self) -> Bool
+pub fn Owner::to_json(Self) -> Json
+pub fn Owner::to_repr(Self) -> @debug.Repr
+
+pub struct Snapshot {
+  // private fields
+} derive(@debug.Debug)
+pub fn Snapshot::bottlenecks(Self) -> Array[Bottleneck]
+pub fn Snapshot::children(Self, Int) -> Array[Entry] raise LockError
+pub fn Snapshot::entries(Self) -> Array[Entry]
+pub fn Snapshot::entry(Self, Int) -> Entry raise LockError
+pub fn Snapshot::length(Self) -> Int
+pub fn Snapshot::query_range(Self, FileKey, ByteRange, include_waiters? : Bool) -> Array[Entry] raise LockError
+pub fn Snapshot::to_json(Self) -> Json
+pub fn Snapshot::to_repr(Self) -> @debug.Repr
+pub fn Snapshot::wait_chain(Self, Int) -> Array[Entry] raise LockError
+
+// Type aliases
+
+// Traits
