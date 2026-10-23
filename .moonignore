@@ -1,0 +1,11 @@
+/_build/
+/target/
+/research/
+/release-local/
+/demo-output/
+/tmp/
+/.local-ledger.md
+/.git/
+/.github/
+/output/
+__pycache__/
