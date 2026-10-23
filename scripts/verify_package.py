@@ -18,7 +18,7 @@ def run(*args, cwd=ROOT):
 
 def main():
     run("moon", "package")
-    archive = ROOT / "_build/publish/local-moonlocklens-0.1.0.zip"
+    archive = ROOT / "_build/publish/local-moonlocklens-0.2.0.zip"
     local = ROOT / "release-local/package-consumption"
     # Refuse replacing an unrelated directory. Reuse only the exact task-local path.
     assert local.resolve().parent == (ROOT / "release-local").resolve()
@@ -37,12 +37,12 @@ def main():
             assert required in [n.replace("\\", "/") for n in names], required
         z.extractall(dependency)
     # Run the packaged executable before creating the isolated workspace.
-    standalone = run("moon", "run", "cmd/main", "--target", "js", "--", "inspect", "fixtures/contention.locks", cwd=dependency)
+    standalone = run("moon", "run", "cmd/main", "--target", "js", "--", "inspect", "fixtures/contention.locks", "--json", cwd=dependency)
     assert len(json.loads(standalone.stdout)["entries"]) == 6
     consumer = local / "consumer"
     consumer.mkdir()
     (local / "moon.work").write_text('members = ["dependency", "consumer"]\n')
-    (consumer / "moon.mod").write_text('name = "local/locklens-consumer"\nversion = "0.0.1"\nimport { "local/moonlocklens@0.1.0" }\n')
+    (consumer / "moon.mod").write_text('name = "local/locklens-consumer"\nversion = "0.0.1"\nimport { "local/moonlocklens@0.2.0" }\n')
     (consumer / "moon.pkg").write_text('import { "local/moonlocklens" @locks } for "test"\n')
     (consumer / "consumer_test.mbt").write_text('''///|
 test "archive consumer sees public constructors and methods" {
@@ -52,6 +52,8 @@ test "archive consumer sees public constructors and methods" {
   let key : @locks.FileKey = { major: 8U, minor: 1U, inode: 42UL }
   assert_eq(s.query_range(key, @locks.byte_range("20", "20")).length(), 2)
   assert_eq(s.entry(1).owner, @locks.Process(1))
+  assert_eq(s.matching(pid=2).map(e => e.line), [2])
+  assert_eq(s.with_blockers([2]).map(e => e.line), [1, 2])
 }
 ''')
     results = {}

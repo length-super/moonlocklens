@@ -6,3 +6,4 @@
 /tmp/
 /.local-ledger.md
 __pycache__/
+/output/cli/

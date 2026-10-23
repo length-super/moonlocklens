@@ -110,10 +110,12 @@ pub fn Snapshot::children(Self, Int) -> Array[Entry] raise LockError
 pub fn Snapshot::entries(Self) -> Array[Entry]
 pub fn Snapshot::entry(Self, Int) -> Entry raise LockError
 pub fn Snapshot::length(Self) -> Int
+pub fn Snapshot::matching(Self, pid? : Int, file? : FileKey, waiting_only? : Bool) -> Array[Entry] raise LockError
 pub fn Snapshot::query_range(Self, FileKey, ByteRange, include_waiters? : Bool) -> Array[Entry] raise LockError
 pub fn Snapshot::to_json(Self) -> Json
 pub fn Snapshot::to_repr(Self) -> @debug.Repr
 pub fn Snapshot::wait_chain(Self, Int) -> Array[Entry] raise LockError
+pub fn Snapshot::with_blockers(Self, ArrayView[Int]) -> Array[Entry] raise LockError
 
 // Type aliases
 

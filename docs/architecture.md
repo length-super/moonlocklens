@@ -1,5 +1,11 @@
 # 架构与解释要点
 
+0.2.0：selection.mbt 组合 PID/file/waiter 过滤；with_blockers 从精确匹配的 source line 集合出发，逆序沿 parent 指针闭包，只加入实际阻塞者。返回仍保持快照顺序。matching 的 PID 必须为正数，OFD/不可见 owner 不伪装为进程。选择 API 不暴露内部数组。
+
+CLI 按 host/options/commands/render 分包内文件：host 仅做有界 I/O、独占新建与 Linux stat；options 校验参数；commands 调用公开库；render 负责文本/JSON。过滤结果明确区分 matched_lines 与附加 blocker context。scope 中根的影响统计注明为整个可见快照计数。JSON 错误的 line 是数字或 null，而非 MoonBit Option 编码。
+
+独立运行包把编译 JS 置于 lib/main.cjs，附 Windows/POSIX 启动器、说明、许可和 synthetic fixture；不依赖工作树、MoonBit、Python、注册表或第三方 JS 模块。去掉未分发 source map 的引用。capture 只创建新文件，读取/解析失败或已有目标均不覆盖既有内容。
+
 numbers.mbt 用逐位有界累计解析 decimal/hex；先检查 `(cap-digit)/base` 再乘加，避免 UInt64 溢出。ByteRange 使用 inclusive 上界，None 表示 EOF，相交判断直接比较端点，避免最大 offset 加一溢出。
 
 parser.mbt 先限制输入，再逐行解析七个锁字段。冒号后的第一个空格为 kernel 固定前缀；箭头之前总空格数恰为深度。stack[d] 是最近接受的深度 d 记录下标；同深度兄弟替换槽位，更深祖先被弹出。新根清空旧栈，blocked depth 不得超过栈长且 ordinal 必须匹配。父下标始终小于子下标，因此不可形成父指针环。

@@ -1,5 +1,7 @@
 # MoonLockLens
 
+0.2.0 已补齐实际使用流程：免编译 Node 运行包、默认文本/显式 JSON、PID/实际文件/等待筛选、阻塞者上下文、stdin/BOM、独占现场保存和离线回放、自动化等待退出码。保留库兼容性，新增 matching/with_blockers。运行说明见 docs/cli-guide.md，续验见 docs/test-evidence/usability.md。
+
 一个为 MoonBit 生态提供 Linux 文件锁等待关系解释与离线重放能力的开源项目。
 
 目标用户：构建缓存、数据库运维、任务调度与容器诊断工具开发者。程序卡住时，需要知道哪个文件的哪个字节区间、哪条锁等待链在阻塞。lslocks 可人工查看，但 MoonBit 工具还需要可组合的类型化库。调研依据见两份生态报告。

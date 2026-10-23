@@ -66,8 +66,8 @@ def section(title, body):
 
 section("01  真实问题", "构建缓存、后台任务和数据库工具卡住时，需要解释哪个文件的哪个字节区间、哪条等待链正在阻塞。单一 PID 清单不足以表达嵌套等待，OFD 锁也不能归给一个进程。")
 section("02  独立贡献", "原创纯 MoonBit 核心：有界解析 /proc/locks，按内核缩进还原直接与传递等待；输出逐层源行 witness、等待规模排名和 inclusive 字节区间查询。已有 POSIX FFI 负责系统调用，lslocks 用作独立对照，本项目提供 MoonBit 可组合的诊断 API。")
-section("03  可以运行的交付", "提供公开类型、结构化错误、Node CLI、synthetic 演示和回归测试；保留未知锁族、lease 状态、PID 0/-1 与 EOF。支持 Wasm-GC / JS 离线核心，Linux 只读 live 采集。源码、许可、调研、测试证据及实际归档消费材料均保留在本地项目。")
-section("04  验证与演示", "两个后端各 13 项核心测试；check、build、格式和公开 API 验证；实际 ZIP 解包消费者通过。本机 Linux 实测 POSIX、FLOCK、OFD 三类锁竞争，与 Python fcntl / lslocks 对照通过。三分钟演示包含嵌套等待、边界字节相交和错误拒绝。")
+section("03  可以运行的交付", "0.2.0 提供免编译 Node 运行包、Windows/Linux 启动器、文本与 JSON 报告；按 PID、实际文件及等待状态定位，保留阻塞者上下文。支持 stdin、现场保存与离线回放、自动化等待退出码；库支持 Wasm-GC / JS。源码、许可、说明、演示和申报材料保留在本地。")
+section("04  验证与演示", "两个后端各 15 项核心测试；格式、构建、公开 API 和 CLI 流程通过；实际源码 ZIP 消费和运行包独立启动通过。本机 Linux 实测 POSIX、FLOCK、OFD 锁竞争，与 Python fcntl / lslocks 对照，并验证按路径定位、capture/replay 及拒绝覆盖已有文件。")
 section("05  范围与维护", "只观察快照，不解锁或杀进程；namespace 可见性有限，序号不是跨时间身份；区间重叠不是授予预测，等待树不是死锁证明。新差异进入回归，公共 API 按版本管理；AI 辅助开发，参赛者需掌握关键架构与边界。")
 section("06  申报信息", "参赛者、队长 GitHub ID、队员、公开仓库和正式 namespace 待指定。当前未报名、未发布、未取得审核结果。十月报名与验收截止 2026-10-31；公开持续开发为后续参赛缺项，按用户要求本次先本地保存。")
 assert y > 44, y

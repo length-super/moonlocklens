@@ -20,5 +20,7 @@ jobs:
         run: |
           mkdir -p release-local
           python scripts/verify.py
-          python scripts/linux_oracle.py
+          python scripts/build_cli.py
+          python scripts/verify_distribution.py
+          MOONLOCKLENS_CLI="$PWD/release-local/cli-validation/moonlocklens-0.2.0/lib/main.cjs" python scripts/linux_oracle.py
           python scripts/verify_package.py

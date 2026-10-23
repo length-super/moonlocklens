@@ -1,14 +1,14 @@
 # MoonLockLens 本地验收复核
 
-2026-10-23，项目版本 0.1.0，本地模块 local/moonlocklens。
+2026-10-23，项目版本 0.2.0，本地模块 local/moonlocklens。
 
 ## 本地材料就绪
 
-源码、MIT 许可、第三方来源、四份调研/方案、公开接口、Wasm-GC/JS 测试、可运行 demo/CLI、真实 Linux 文件锁 oracle、实际 package ZIP 与解包独立消费者、精简申报草稿和一页 PDF 已准备。具体结果见 test-evidence/local.md；本地归档最终清单与消费摘要见 release.md。
+源码、MIT 许可、第三方来源、四份调研/方案、公开接口、Wasm-GC/JS 测试、可运行 demo/CLI、真实 Linux 文件锁 oracle、实际 package ZIP 与解包独立消费者、精简申报草稿和一页 PDF 已准备。0.2.0 增加免编译 Node 运行包、文本报告、PID/文件定位、筛选上下文、stdin、capture/replay 和自动化退出码；具体续验结果见 test-evidence/usability.md，0.1.0 基线保留在 local.md。
 
 原创 MoonBit 核心提供 inode/device/byte-range 对象、严格等待树解析、逐层阻塞 witness、根锁受影响规模与区间查询。JS FFI 只做宿主读取/参数/退出。没有拷贝 Linux、util-linux 或相邻 MoonBit 项目实现。OFD unknown owner、PID 0、未知类型、lease 状态、不溢出的 EOF 范围均明确表达。
 
-核心测试/实际输出通过后冻结功能；此次没有扩大到自动解锁、PID 清理、文件路径扫描、snapshot diff 或 native 后端。真实系统验证仅操作本次创建的临时文件和子进程。范围相交与等待依赖不宣称死锁判定。
+0.2.0 覆盖完整的采集→定位→保存→回放流程。真实系统验证仅操作本次创建的临时文件和子进程。按明确 --file 路径 stat，不扫描进程 fd；范围相交与等待依赖不宣称死锁判定。
 
 ## 公开发布状态
 

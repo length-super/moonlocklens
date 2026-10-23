@@ -2,6 +2,29 @@
 
 Linux 文件锁等待树诊断库与 CLI。把 `/proc/locks` 转成可解释的记录、逐层阻塞链和区间查询结果。核心为纯 MoonBit，零第三方运行依赖；Node.js 只负责命令行和有界文件读取。
 
+## 直接使用 0.2.0
+
+本地免编译运行包：`output/cli/moonlocklens-0.2.0.zip`；已解压版本在 `output/cli/moonlocklens-0.2.0/`。只需 Node.js 22+，无需安装 MoonBit/Python。完整操作说明见 [使用指南](docs/cli-guide.md)。
+
+在本项目根目录的 PowerShell 中直接试用：
+
+```powershell
+.\output\cli\moonlocklens-0.2.0\moonlocklens.cmd inspect fixtures/contention.locks --pid 300
+```
+
+Linux 解压后：
+
+```sh
+chmod +x moonlocklens
+./moonlocklens live --file /path/to/cache.lock --waiting
+./moonlocklens capture incident.locks
+./moonlocklens inspect incident.locks --json > report.json
+```
+
+支持 PID、device+inode 和等待状态组合筛选，自动保留阻塞者上下文。默认可读文本，`--json` 用于脚本。capture 以 0600 权限保存原文并拒绝覆盖；保存后可在 Windows 回放。输入 `-` 从 stdin 读取 UTF-8/BOM 文本。显式添加 `--fail-on-wait`，可在匹配记录包含等待者时返回 3。
+
+0.2.0 将 CLI 默认输出从 JSON 改为文本；旧脚本需添加 `--json`。库的已有类型与接口保持兼容，新增 matching 和 with_blockers。CLI inspect/live 的 JSON 为 schema moonlocklens/2，原始库 Snapshot::to_json 仍为 moonlocklens/1。
+
 ```text
 PID 300 的请求 [源行 3]
   → 等待 PID 200 的请求 [源行 2]
@@ -24,7 +47,7 @@ moon run cmd/main --target js -- range fixtures/contention.locks 08:01:42 99 99
 moon run cmd/main --target js -- live
 ```
 
-`examples/demo` 和 `fixtures/contention.locks` 是明确标注的 synthetic 数据。chain 使用输入文件的 1-based 源行号，不是每次采集会变化的序号。范围查询的 major/minor 输入为十六进制、inode 为十进制，起止字节均包含，END 可为 EOF。正常输出为 JSON；错误写入 stderr，退出码 1。`--help` 输出命令说明。也可 `moon build --target js` 后直接用 Node 运行 `_build/js/debug/build/cmd/main/main.js`。
+`examples/demo` 和 `fixtures/contention.locks` 是明确标注的 synthetic 数据。chain 使用输入文件的 1-based 源行号，不是每次采集会变化的序号。范围查询的 major/minor 输入为十六进制、inode 为十进制，起止字节均包含，END 可为 EOF。正常输出默认为文本；添加 --json 输出 JSON。错误写入 stderr；退出码 1 为输入/I/O 错误，2 为用法错误。`--help` 输出命令说明。也可 `moon build --target js` 后直接用 Node 运行 `_build/js/debug/build/cmd/main/main.js`。
 
 Windows 若系统默认 MoonBit 较旧，本项目忽略目录中已准备独立工具链；本机执行：
 
@@ -40,6 +63,8 @@ Windows 若系统默认 MoonBit 较旧，本项目忽略目录中已准备独立
 let snapshot = @locks.parse(text)
 let chain = snapshot.wait_chain(3)       // 请求本身 → 直接 blocker → 根记录
 let impact = snapshot.bottlenecks()     // 根记录按所有后代等待数排序
+let matching = snapshot.matching(pid=300, waiting_only=true)
+let context = snapshot.with_blockers(matching.map(e => e.line))
 let children = snapshot.children(1)     // 只返回直接等待项
 let hits = snapshot.query_range(
   @locks.file_key("08:01:42"),
@@ -69,6 +94,8 @@ wait_chain 是内核记录的等待依赖，不是死锁证明。query_range 只
 - `python scripts/verify.py`：格式、双后端 check/build/test、示例与 CLI。
 - Linux `python3 scripts/linux_oracle.py`：项目内临时文件取得 POSIX/FLOCK/OFD 锁，创建自己的等待进程；对照 Python fcntl、proc 原文和 util-linux lslocks，最终清理自己的子进程与临时文件。
 - `python scripts/verify_package.py`：真实 moon package 归档、实际文件清单、隔离解包依赖消费者。
+- `python scripts/build_cli.py`：生成只需 Node.js 的本地运行包。
+- `python scripts/verify_distribution.py`：独立解包并从其他工作目录测试启动器与公开命令。
 - 设计与调研：根目录 project-proposal 及三份生态/竞争报告。
 - 验收与状态：`docs/acceptance-review.md`、`docs/release.md`、`docs/test-evidence/local.md`。
 

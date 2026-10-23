@@ -13,7 +13,7 @@ import tempfile
 import time
 
 ROOT = Path(__file__).resolve().parents[1]
-CLI = ROOT / "_build/js/debug/build/cmd/main/main.js"
+CLI = Path(os.environ.get("MOONLOCKLENS_CLI", ROOT / "_build/js/debug/build/cmd/main/main.js"))
 ROW = re.compile(r"^(\d+): ( *)(-> )?(\S+)\s+(\S+)\s+(\S+)\s+(-?\d+)\s+([0-9a-fA-F]+):([0-9a-fA-F]+):(\d+)\s+(\d+)\s+(EOF|\d+)$")
 
 CHILD = r'''
@@ -28,10 +28,10 @@ print('acquired',flush=True)
 '''
 
 
-def cli(*args, ok=True):
-    p = subprocess.run(["node", str(CLI), *map(str, args)], cwd=ROOT, text=True, capture_output=True, timeout=20)
+def cli(*args, ok=True, code=0):
+    p = subprocess.run(["node", str(CLI), *map(str, args), "--json"], cwd=ROOT, text=True, capture_output=True, timeout=20)
     if ok:
-        assert p.returncode == 0, p.stderr
+        assert p.returncode == code, p.stderr
         return json.loads(p.stdout)
     assert p.returncode != 0 and p.stderr.strip(), p
     return p.stderr
@@ -117,7 +117,17 @@ def main():
                 assert (holder["range"]["start"], holder["range"]["end"]) == expected
                 hits = cli("range", capture, f"{major:x}:{minor:x}:{inode}", *expected)
                 assert len(hits) == 2
+                path = work / kind
+                by_path = cli("live", "--file", path, "--waiting", "--fail-on-wait", code=3)
+                assert by_path["matching_records"] == 1
+                assert len(by_path["entries"]) == 2
+                assert all(int(e["file"]["inode"]) == inode for e in by_path["entries"])
+                assert all(int(e["file"]["major"]) == major and int(e["file"]["minor"]) == minor for e in by_path["entries"])
+                if kind != "OFDLCK":
+                    by_pid = cli("live", "--pid", waiter["owner"][1], "--waiting")
+                    assert by_pid["matching_records"] == 1 and len(by_pid["entries"]) == 2
                 summary[kind] = {"holders": 1, "waiters": 1, "chain": "matched", "range": "matched"}
+                summary[kind]["path_filter"] = "matched"
 
             ls = subprocess.run(["lslocks", "--json", "--output", "PID,TYPE,MODE,START,END,INODE,BLOCKER"], capture_output=True, text=True, check=True, timeout=10)
             oracle = json.loads(ls.stdout)["locks"]
@@ -138,6 +148,16 @@ def main():
             assert "orphan" in cli("inspect", bad, ok=False)
             summary["live_cli"] = "passed"
             summary["error_cli"] = "passed"
+            saved = work / "incident.locks"
+            cli("capture", saved)
+            before = saved.read_bytes()
+            replay = cli("inspect", saved)
+            captured_rows = [e for e in replay["entries"] if e.get("file") and int(e["file"]["inode"]) in identities]
+            assert sorted(map(normalized, captured_rows)) == sorted(map(normalized, entries))
+            cli("capture", saved, ok=False)
+            assert saved.read_bytes() == before, "capture replaced an existing file"
+            assert saved.stat().st_mode & 0o777 == 0o600
+            summary["capture_replay_no_clobber"] = "passed"
         finally:
             for p in children:
                 if p.poll() is None:
