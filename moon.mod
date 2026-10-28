@@ -1,12 +1,12 @@
 name = "local/moonlocklens"
 
-version = "0.2.0"
+version = "0.3.0"
 
 license = "MIT"
 
 readme = "README.md"
 
-description = "Linux file lock wait trees, blocking witnesses and byte-range queries in MoonBit"
+description = "Linux task wait diagnosis, file contention timelines and replayable incident reports in MoonBit"
 
 preferred_target = "wasm-gc"
 

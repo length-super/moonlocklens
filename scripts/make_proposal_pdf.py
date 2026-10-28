@@ -28,9 +28,9 @@ c.setFillColor(colors.white)
 c.setFont("Helvetica-Bold", 30)
 c.drawString(42, H-81, "MoonLockLens")
 c.setFont(FONT, 15)
-c.drawString(43, H-111, "Linux 文件锁等待树诊断与离线重放")
+c.drawString(43, H-111, "Linux 任务等待与文件争用诊断")
 c.setFont(FONT, 10)
-c.drawString(43, H-133, "本地项目申报草稿  /  2026-10-23  /  MIT")
+c.drawString(43, H-133, "本地项目申报草稿  /  2026-10-28  /  MIT")
 
 y = H-179
 
@@ -64,11 +64,11 @@ def section(title, body):
     y -= 14
 
 
-section("01  真实问题", "构建缓存、后台任务和数据库工具卡住时，需要解释哪个文件的哪个字节区间、哪条等待链正在阻塞。单一 PID 清单不足以表达嵌套等待，OFD 锁也不能归给一个进程。")
-section("02  独立贡献", "原创纯 MoonBit 核心：有界解析 /proc/locks，按内核缩进还原直接与传递等待；输出逐层源行 witness、等待规模排名和 inclusive 字节区间查询。已有 POSIX FFI 负责系统调用，lslocks 用作独立对照，本项目提供 MoonBit 可组合的诊断 API。")
-section("03  可以运行的交付", "0.2.0 提供免编译 Node 运行包、Windows/Linux 启动器、文本与 JSON 报告；按 PID、实际文件及等待状态定位，保留阻塞者上下文。支持 stdin、现场保存与离线回放、自动化等待退出码；库支持 Wasm-GC / JS。源码、许可、说明、演示和申报材料保留在本地。")
-section("04  验证与演示", "两个后端各 15 项核心测试；格式、构建、公开 API 和 CLI 流程通过；实际源码 ZIP 消费和运行包独立启动通过。本机 Linux 实测 POSIX、FLOCK、OFD 锁竞争，与 Python fcntl / lslocks 对照，并验证按路径定位、capture/replay 及拒绝覆盖已有文件。")
-section("05  范围与维护", "只观察快照，不解锁或杀进程；namespace 可见性有限，序号不是跨时间身份；区间重叠不是授予预测，等待树不是死锁证明。新差异进入回归，公共 API 按版本管理；AI 辅助开发，参赛者需掌握关键架构与边界。")
+section("01  真实问题", "构建、后台作业或数据库维护任务卡住时，用户需要从任务 PID 找到实际等待的子进程、锁请求和外部阻塞者，并记录后续是否恢复。")
+section("02  独立贡献", "原创纯 MoonBit 核心：有界解析 stat/wchan/locks，关联当前任务树、锁请求和逐层阻塞证据；用 PID+starttime 区分身份，记录状态及阻塞证据变化。保留等待树、影响排名与字节区间 API。")
+section("03  可以运行的交付", "0.3.0 提供免编译 Node 包和 Windows/Linux 启动器。diagnose/watch/report 串起任务诊断、连续采样、会话保存与文本/JSON/Markdown 回放。实际采集需要 Linux；库支持 Wasm-GC / JS，源码与申报材料保留在本地。")
+section("04  验证与演示", "两个后端各 24 项核心测试，格式、构建、API 与 CLI 通过；实际 ZIP 消费和独立运行包通过。真实 Linux 父子任务被外部 FLOCK 阻塞，五帧观察验证第二帧释放后等待消失；保留 POSIX/FLOCK/OFD 独立对照。")
+section("05  范围与维护", "只读有界采样，namespace 可见性有限；wchan 为线索，采样跨度非精确持续等待时长。序号不作跨帧身份；区间重叠非授予预测，等待树非死锁证明。AI 辅助开发，参赛者需掌握关键架构与边界。")
 section("06  申报信息", "参赛者、队长 GitHub ID、队员、公开仓库和正式 namespace 待指定。当前未报名、未发布、未取得审核结果。十月报名与验收截止 2026-10-31；公开持续开发为后续参赛缺项，按用户要求本次先本地保存。")
 assert y > 44, y
 c.setStrokeColor(colors.HexColor("#dbe4ed"))

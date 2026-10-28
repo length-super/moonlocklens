@@ -22,5 +22,6 @@ jobs:
           python scripts/verify.py
           python scripts/build_cli.py
           python scripts/verify_distribution.py
-          MOONLOCKLENS_CLI="$PWD/release-local/cli-validation/moonlocklens-0.2.0/lib/main.cjs" python scripts/linux_oracle.py
+          MOONLOCKLENS_CLI="$PWD/release-local/cli-validation/moonlocklens-0.3.0/lib/main.cjs" python scripts/linux_oracle.py
+          MOONLOCKLENS_CLI="$PWD/release-local/cli-validation/moonlocklens-0.3.0/lib/main.cjs" python scripts/verify_task_linux.py
           python scripts/verify_package.py

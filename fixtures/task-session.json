@@ -1,0 +1,90 @@
+{
+  "schema": "moonlocklens-task/1",
+  "root_pid": 100,
+  "frames": [
+    {
+      "elapsed_ms": "0",
+      "boot_id": "synthetic-boot",
+      "pid_namespace": "synthetic-pidns",
+      "captured_at": "2026-10-28T00:00:00Z",
+      "catalog_complete": true,
+      "root_error": "",
+      "root_after": "100 (demo-builder) S 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1000",
+      "processes": [
+        {
+          "stat": "100 (demo-builder) S 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1000",
+          "wchan": "do_wait",
+          "wchan_error": ""
+        },
+        {
+          "stat": "200 (cache-worker) S 100 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2000",
+          "wchan": "locks_lock_inode_wait",
+          "wchan_error": ""
+        },
+        {
+          "stat": "900 (cache-holder) S 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 900",
+          "wchan": "hrtimer_nanosleep",
+          "wchan_error": ""
+        }
+      ],
+      "locks": "1: POSIX ADVISORY WRITE 900 08:01:42 0 EOF\n1: -> POSIX ADVISORY WRITE 200 08:01:42 0 EOF",
+      "locks_error": ""
+    },
+    {
+      "elapsed_ms": "500",
+      "boot_id": "synthetic-boot",
+      "pid_namespace": "synthetic-pidns",
+      "captured_at": "2026-10-28T00:00:00Z",
+      "catalog_complete": true,
+      "root_error": "",
+      "root_after": "100 (demo-builder) S 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1000",
+      "processes": [
+        {
+          "stat": "100 (demo-builder) S 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1000",
+          "wchan": "do_wait",
+          "wchan_error": ""
+        },
+        {
+          "stat": "200 (cache-worker) S 100 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2000",
+          "wchan": "locks_lock_inode_wait",
+          "wchan_error": ""
+        },
+        {
+          "stat": "900 (cache-holder) S 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 900",
+          "wchan": "hrtimer_nanosleep",
+          "wchan_error": ""
+        }
+      ],
+      "locks": "1: POSIX ADVISORY WRITE 900 08:01:42 0 EOF\n1: -> POSIX ADVISORY WRITE 200 08:01:42 0 EOF",
+      "locks_error": ""
+    },
+    {
+      "elapsed_ms": "1000",
+      "boot_id": "synthetic-boot",
+      "pid_namespace": "synthetic-pidns",
+      "captured_at": "2026-10-28T00:00:00Z",
+      "catalog_complete": true,
+      "root_error": "",
+      "root_after": "100 (demo-builder) S 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1000",
+      "processes": [
+        {
+          "stat": "100 (demo-builder) S 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1000",
+          "wchan": "do_wait",
+          "wchan_error": ""
+        },
+        {
+          "stat": "200 (cache-worker) R 100 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2000",
+          "wchan": "0",
+          "wchan_error": ""
+        },
+        {
+          "stat": "900 (cache-holder) S 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 900",
+          "wchan": "hrtimer_nanosleep",
+          "wchan_error": ""
+        }
+      ],
+      "locks": "",
+      "locks_error": ""
+    }
+  ]
+}

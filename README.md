@@ -1,15 +1,35 @@
 # MoonLockLens
 
-Linux 文件锁等待树诊断库与 CLI。把 `/proc/locks` 转成可解释的记录、逐层阻塞链和区间查询结果。核心为纯 MoonBit，零第三方运行依赖；Node.js 只负责命令行和有界文件读取。
+Linux 任务等待与文件争用诊断工具及 MoonBit 库。从一个任务 PID 出发，关联当前子进程、文件锁请求与外部阻塞者，连续采样并生成可回放的故障报告。核心为纯 MoonBit，零第三方运行模块依赖；Node.js 负责有界 procfs 读取、采样时钟与命令行 I/O。
 
-## 直接使用 0.2.0
+## 从卡住的任务进入诊断
 
-本地免编译运行包：`output/cli/moonlocklens-0.2.0.zip`；已解压版本在 `output/cli/moonlocklens-0.2.0/`。只需 Node.js 22+，无需安装 MoonBit/Python。完整操作说明见 [使用指南](docs/cli-guide.md)。
+Linux：
+
+```sh
+./moonlocklens diagnose 1234
+./moonlocklens watch 1234 --samples 10 --interval 500 --output incident.json
+./moonlocklens report incident.json --markdown > incident.md
+```
+
+把 1234 替换成实际任务的根进程 PID。工具列出当前子进程、已确认的锁请求和直接/传递阻塞证据；睡眠位置、停止/僵尸状态作为其他排查线索。观察到的状态变化、阻塞证据变化及不再可见会进入时间线，供定位下一步检查对象。
+
+Windows 也能直接体验任务报告：
+
+```powershell
+.\output\cli\moonlocklens-0.3.0\moonlocklens.cmd report fixtures/task-session.json
+```
+
+此 fixture 为 synthetic：构建父任务等待工作进程，工作进程先被外部锁阻塞，随后锁等待消失。它与真实 Linux 验证分开记录。详细流程、证据等级和采样边界见 [任务诊断指南](docs/task-guide.md)。
+
+## 直接使用 0.3.0
+
+本地免编译运行包：`output/cli/moonlocklens-0.3.0.zip`；已解压版本在 `output/cli/moonlocklens-0.3.0/`。只需 Node.js 22+，无需安装 MoonBit/Python。完整操作说明见 [使用指南](docs/cli-guide.md)。
 
 在本项目根目录的 PowerShell 中直接试用：
 
 ```powershell
-.\output\cli\moonlocklens-0.2.0\moonlocklens.cmd inspect fixtures/contention.locks --pid 300
+.\output\cli\moonlocklens-0.3.0\moonlocklens.cmd inspect fixtures/contention.locks --pid 300
 ```
 
 Linux 解压后：
@@ -35,7 +55,7 @@ PID 300 的请求 [源行 3]
 
 ## 本地开始
 
-需要 MoonBit `moonc v0.10.15+943464bfa`（本次验证版本，2026-10-12 工具链）和 Node.js 22+。核心支持 Wasm-GC 与 JS；CLI 支持 Windows/Linux Node.js，live 仅 Linux。
+从源码开发需要 MoonBit `moonc v0.10.15+943464bfa`（本次验证版本，2026-10-12 工具链）和 Node.js 22+。核心支持 Wasm-GC 与 JS；Windows/Linux 都可回放，live/capture/diagnose/watch 的实际采集需要 Linux。
 
 ```sh
 moon test --target wasm-gc --deny-warn
@@ -96,6 +116,8 @@ wait_chain 是内核记录的等待依赖，不是死锁证明。query_range 只
 - `python scripts/verify_package.py`：真实 moon package 归档、实际文件清单、隔离解包依赖消费者。
 - `python scripts/build_cli.py`：生成只需 Node.js 的本地运行包。
 - `python scripts/verify_distribution.py`：独立解包并从其他工作目录测试启动器与公开命令。
+- `python scripts/verify_task_cli.py`：跨平台任务会话回放、JSON/Markdown 和时间线合约。
+- Linux `python3 scripts/verify_task_linux.py`：真实父子任务、外部锁争用、五次连续采样及释放后的变化对照。
 - 设计与调研：根目录 project-proposal 及三份生态/竞争报告。
 - 验收与状态：`docs/acceptance-review.md`、`docs/release.md`、`docs/test-evidence/local.md`。
 

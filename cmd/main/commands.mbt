@@ -1,5 +1,15 @@
 ///|
 fn run(options : Options) -> Int32 raise {
+  if options.args.get(0) is Some(command) &&
+    (command == "diagnose" || command == "watch" || command == "report") {
+    return task_command(options)
+  }
+  if options.markdown ||
+    options.samples is Some(_) ||
+    options.interval is Some(_) ||
+    options.output is Some(_) {
+    raise Usage("sampling/Markdown options are for diagnose, watch or report")
+  }
   let filtered = options.pid is Some(_) ||
     options.key is Some(_) ||
     options.file is Some(_) ||
@@ -17,7 +27,7 @@ fn run(options : Options) -> Int32 raise {
       return 0
     }
     ["--version"] => {
-      println("MoonLockLens 0.2.0")
+      println("MoonLockLens 0.3.0")
       return 0
     }
     ["inspect", path] => {
@@ -28,14 +38,14 @@ fn run(options : Options) -> Int32 raise {
     }
     ["live"] => {
       if !is_linux() {
-        fail("live requires Linux; use inspect for saved captures")
+        raise HostError("live requires Linux; use inspect for saved captures")
       }
       let key = match options.file {
         None => options.key
         Some(path) => {
           let result = path_key(path)
           if result[0] != "ok" {
-            fail(result[1])
+            raise HostError(result[1])
           }
           Some(@locks.file_key(result[1]))
         }
@@ -47,13 +57,13 @@ fn run(options : Options) -> Int32 raise {
         raise Usage("capture accepts only output format options")
       }
       if !is_linux() {
-        fail("capture requires Linux")
+        raise HostError("capture requires Linux")
       }
       let raw = read_input("/proc/locks")
       let s = @locks.parse(raw)
       let error = save_new(path, raw)
       if error != "" {
-        fail(error)
+        raise HostError(error)
       }
       if options.json {
         let payload : Json = {

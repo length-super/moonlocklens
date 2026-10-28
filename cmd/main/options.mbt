@@ -4,9 +4,18 @@ suberror Usage {
 }
 
 ///|
+suberror HostError {
+  HostError(String)
+}
+
+///|
 struct Options {
   args : Array[String]
   json : Bool
+  markdown : Bool
+  samples : Int32?
+  interval : Int32?
+  output : String?
   pid : Int32?
   key : @locks.FileKey?
   file : String?
@@ -45,6 +54,10 @@ fn positive_number(text : String) -> Int32 raise {
 fn parse_options(input : ArrayView[String]) -> Options raise {
   let args : Array[String] = []
   let mut json = false
+  let mut markdown = false
+  let mut samples = None
+  let mut interval = None
+  let mut output = None
   let mut format_seen = false
   let mut pid = None
   let mut key = None
@@ -60,11 +73,12 @@ fn parse_options(input : ArrayView[String]) -> Options raise {
     }
     match arg {
       "--" => positional = true
-      "--json" | "--text" => {
+      "--json" | "--text" | "--markdown" => {
         if format_seen {
-          raise Usage("specify --json or --text once")
+          raise Usage("specify --json, --text or --markdown once")
         }
         json = arg == "--json"
+        markdown = arg == "--markdown"
         format_seen = true
       }
       "--pid" | "--key" | "--file" => {
@@ -95,6 +109,33 @@ fn parse_options(input : ArrayView[String]) -> Options raise {
         continue i + 2
       }
       "--waiting" => waiting = true
+      "--samples" | "--interval" | "--output" => {
+        if i + 1 >= input.length() {
+          raise Usage("missing value for " + arg)
+        }
+        let value = input[i + 1]
+        match arg {
+          "--samples" => {
+            if samples is Some(_) {
+              raise Usage("duplicate --samples")
+            }
+            samples = Some(positive_number(value))
+          }
+          "--interval" => {
+            if interval is Some(_) {
+              raise Usage("duplicate --interval")
+            }
+            interval = Some(positive_number(value))
+          }
+          _ => {
+            if output is Some(_) || value.is_empty() {
+              raise Usage("invalid or duplicate --output")
+            }
+            output = Some(value)
+          }
+        }
+        continue i + 2
+      }
       "--fail-on-wait" => fail_on_wait = true
       _ => {
         if arg.has_prefix("--") && arg != "--help" && arg != "--version" {
@@ -105,19 +146,34 @@ fn parse_options(input : ArrayView[String]) -> Options raise {
     }
     continue i + 1
   }
-  { args, json, pid, key, file, waiting, fail_on_wait, }
+  {
+    args,
+    json,
+    markdown,
+    samples,
+    interval,
+    output,
+    pid,
+    key,
+    file,
+    waiting,
+    fail_on_wait,
+  }
 }
 
 ///|
 fn help() -> Unit {
   let text =
-    #|MoonLockLens 0.2.0 - Linux file-lock wait diagnostics
+    #|MoonLockLens 0.3.0 - Linux task wait and file-contention diagnostics
     #|
     #|  moonlocklens inspect FILE       Explain a saved /proc/locks capture
     #|  moonlocklens live               Inspect the current Linux procfs
     #|  moonlocklens capture OUTPUT     Save a new replay file (never overwrite)
     #|  moonlocklens chain FILE LINE    Trace one request to its root blocker
     #|  moonlocklens range FILE KEY START END_OR_EOF
+    #|  moonlocklens diagnose PID       Inspect a task and current descendants
+    #|  moonlocklens watch PID --samples 10 --interval 500 --output incident.json
+    #|  moonlocklens report incident.json [--markdown | --json]
     #|
     #|  FILE may be '-' for UTF-8 stdin; source LINE is 1-based.
     #|  KEY is hex-major:hex-minor:decimal-inode. Range endpoints are inclusive.
@@ -125,6 +181,8 @@ fn help() -> Unit {
     #|  live additionally accepts --file PATH (stat identity, follows symlinks).
     #|  Matching rows are marked '*'; their blockers are retained as context.
     #|  --json                    Machine-readable stdout (default is text)
+    #|  --markdown                Markdown task incident report
+    #|  --samples / --interval    watch: 1..60 samples, 100..5000 ms between collections
     #|  --fail-on-wait            Exit 3 if the selected records contain waiters
     #|  --                        End options, for filenames starting with '--'
     #|  Exit: 0 success / 1 input or I/O error / 2 usage / 3 observed waiters

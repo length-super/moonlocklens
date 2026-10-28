@@ -7,7 +7,7 @@ import subprocess
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 
 def main():
@@ -23,6 +23,7 @@ def main():
     shutil.copy2(ROOT / "docs/cli-guide.md", folder / "README.md")
     (folder / "fixtures").mkdir(exist_ok=True)
     shutil.copy2(ROOT / "fixtures/contention.locks", folder / "fixtures/contention.locks")
+    shutil.copy2(ROOT / "fixtures/task-session.json", folder / "fixtures/task-session.json")
     archive = folder.parent / (folder.name + ".zip")
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as z:
         for file in sorted(folder.rglob("*")):

@@ -1,5 +1,13 @@
 # 架构与解释要点
 
+0.3.0 从任务入口组织证据。process.mbt 解析 stat 的首个 ` (` 与最后一个 `) `，保留包含括号/换行的 comm；starttime 使用 UInt64 字符串。task_capture.mbt 选择当前 parent 图中的后代，将任务及外部 blocker 的 stat/wchan 与相关锁树保存为 moonlocklens-task/1。无关 catalog/锁不进入会话。单帧最多 4096 个 catalog 进程、256 个任务进程，最多 60 帧，累计规范化存储约 1600 万字符。
+
+task_report.mbt 将带 PID 的锁请求映射到任务进程，保留请求的直接父行和阻塞链；OFD 未知 owner 不映射为 PID。没有明确锁等待时，进程状态与 wchan 给出下一步排查线索。task_markdown.mbt 生成报告并转义进程名；JSON 报告为 moonlocklens-report/1。
+
+会话身份由 boot_id、读取者 PID namespace/procfs 挂载标识及 PID+starttime 约束，采样前后重读 root。root 消失、不可读、身份变化分别表达；不会把复用 PID 作为原任务。仅追踪当前后代，不承诺保留已重新挂靠的历史后代。时间线比较进程身份、finding 与阻塞语义/身份证据，不使用跨帧 ordinal 或源行号。连续采样次数和首末观测跨度不证明间隔内持续阻塞。
+
+task_host.mbt 仅做有界 procfs 读取、单调时钟、等待与输出，task_commands.mbt 调用核心 API。采集不是原子快照，证据可能不完整；明确记录读取失败，首帧不能定位 root 时失败。Windows 可重算已保存会话，实际 diagnose/watch 需要 Linux。
+
 0.2.0：selection.mbt 组合 PID/file/waiter 过滤；with_blockers 从精确匹配的 source line 集合出发，逆序沿 parent 指针闭包，只加入实际阻塞者。返回仍保持快照顺序。matching 的 PID 必须为正数，OFD/不可见 owner 不伪装为进程。选择 API 不暴露内部数组。
 
 CLI 按 host/options/commands/render 分包内文件：host 仅做有界 I/O、独占新建与 Linux stat；options 校验参数；commands 调用公开库；render 负责文本/JSON。过滤结果明确区分 matched_lines 与附加 blocker context。scope 中根的影响统计注明为整个可见快照计数。JSON 错误的 line 是数字或 null，而非 MoonBit Option 编码。

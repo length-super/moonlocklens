@@ -7,3 +7,4 @@
 /.local-ledger.md
 __pycache__/
 /output/cli/
+/output/reports/

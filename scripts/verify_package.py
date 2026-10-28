@@ -18,7 +18,7 @@ def run(*args, cwd=ROOT):
 
 def main():
     run("moon", "package")
-    archive = ROOT / "_build/publish/local-moonlocklens-0.2.0.zip"
+    archive = ROOT / "_build/publish/local-moonlocklens-0.3.0.zip"
     local = ROOT / "release-local/package-consumption"
     # Refuse replacing an unrelated directory. Reuse only the exact task-local path.
     assert local.resolve().parent == (ROOT / "release-local").resolve()
@@ -33,16 +33,18 @@ def main():
             path = PurePosixPath(name.replace("\\", "/"))
             assert not path.is_absolute() and ".." not in path.parts
             assert not any(p in banned for p in path.parts), name
-        for required in ("moon.mod", "moon.pkg", "types.mbt", "parser.mbt", "queries.mbt", "pkg.generated.mbti", "README.md", "LICENSE", "THIRD_PARTY.md", "fixtures/contention.locks"):
+        for required in ("moon.mod", "moon.pkg", "types.mbt", "parser.mbt", "queries.mbt", "task_types.mbt", "process.mbt", "task_capture.mbt", "task_report.mbt", "pkg.generated.mbti", "README.md", "LICENSE", "THIRD_PARTY.md", "fixtures/contention.locks", "fixtures/task-session.json"):
             assert required in [n.replace("\\", "/") for n in names], required
         z.extractall(dependency)
     # Run the packaged executable before creating the isolated workspace.
     standalone = run("moon", "run", "cmd/main", "--target", "js", "--", "inspect", "fixtures/contention.locks", "--json", cwd=dependency)
     assert len(json.loads(standalone.stdout)["entries"]) == 6
+    task = run("moon", "run", "cmd/main", "--target", "js", "--", "report", "fixtures/task-session.json", "--json", cwd=dependency)
+    assert json.loads(task.stdout)["report"]["sample_count"] == 3
     consumer = local / "consumer"
     consumer.mkdir()
     (local / "moon.work").write_text('members = ["dependency", "consumer"]\n')
-    (consumer / "moon.mod").write_text('name = "local/locklens-consumer"\nversion = "0.0.1"\nimport { "local/moonlocklens@0.2.0" }\n')
+    (consumer / "moon.mod").write_text('name = "local/locklens-consumer"\nversion = "0.0.1"\nimport { "local/moonlocklens@0.3.0" }\n')
     (consumer / "moon.pkg").write_text('import { "local/moonlocklens" @locks } for "test"\n')
     (consumer / "consumer_test.mbt").write_text('''///|
 test "archive consumer sees public constructors and methods" {
@@ -56,6 +58,9 @@ test "archive consumer sees public constructors and methods" {
   assert_eq(s.with_blockers([2]).map(e => e.line), [1, 2])
 }
 ''')
+    wire = json.dumps((dependency / "fixtures/task-session.json").read_text(encoding="utf8"))
+    with (consumer / "consumer_test.mbt").open("a", encoding="utf8") as stream:
+        stream.write('\n///|\ntest "archive task report API" {\n  let c = @locks.parse_task_capture(' + wire + ')\n  assert_eq(c.report().max_consecutive_wait_samples, 2)\n  assert_true(c.report().to_markdown().contains("Observed transitions"))\n}\n')
     results = {}
     for target in ("wasm-gc", "js"):
         output = run("moon", "test", "--package", "local/locklens-consumer", "--target", target, "--deny-warn", cwd=consumer)

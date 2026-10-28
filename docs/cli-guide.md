@@ -1,6 +1,32 @@
-# MoonLockLens 0.2.0 使用指南
+# MoonLockLens 0.3.0 使用指南
 
 这是可直接解压使用的命令行工具。需要 Node.js 22 或更高版本；运行包不需要 MoonBit、Python、联网或安装第三方模块。
+
+## 任务等待诊断与报告
+
+Linux 输入卡住任务的根 PID：
+
+```sh
+./moonlocklens diagnose 1234
+./moonlocklens watch 1234 --samples 10 --interval 500 --output incident.json
+./moonlocklens report incident.json --markdown > incident.md
+```
+
+diagnose 采集一次；watch 保存有限次数的任务会话，默认 10 次、每次采集完成后间隔 500 ms。支持 1-60 次、100-5000 ms 间隔。实际时间线使用单调时钟，采集耗时会计入观察间距。watch 必须指定新的 --output 文件，以 0600 权限保存且拒绝覆盖。非 JSON 模式把采样进度写到 stderr，最终报告写 stdout。
+
+report 支持 Windows/Linux 离线回放，输入为任务会话 JSON；--json 输出 machine report，--markdown 输出可分享的排障报告。无需真实进程仍在运行。可以先运行 `report fixtures/task-session.json` 体验 synthetic 三帧示例：父任务等待子进程，子进程两次被锁阻塞，第三次未再观察到锁等待。
+
+报告给出当前进程树、PID+启动 ticks 身份、leader 状态、wchan 线索、锁请求/直接父行/阻塞者上下文、相关文件 device+inode、外部持有者元数据、观测变化和下一步检查建议。root PID 复用时不附着新任务；进程不再可见与成功完成分开表达。
+
+已确认文件锁等待来自内核阻塞记录与 PID 的对应；wchan 只说明 leader 的睡眠位置，不能据此证明所有线程或根因。OFD owner=-1 无法单靠 PID 归属，仍可使用原有 live --file 定位。两次都观察到等待，不证明期间未释放/重获锁；报告中的 sampled span 不是精确等待时长。
+
+任务会话 schema 为 moonlocklens-task/1；JSON 报告为 moonlocklens-report/1，内容位于 report 字段。64 位 ticks/毫秒值使用十进制字符串。--fail-on-wait 在整个窗口内曾确认锁等待时返回 3，包括最后一帧已恢复的情况。
+
+任务采集读取可见进程的 stat/wchan 目录，再由 MoonBit 选择根任务、当前后代和相关外部阻塞者；保存文件只保留相关进程与锁证据，不读取 cmdline、环境变量或扫描 fd。父子进程按当前快照关系推导，不追踪脱离父进程后被重新收养的全部历史后代。采集非原子，权限、退出竞态和目录预算缺口会明确报告。
+
+上限：4096 个可见进程目录、256 个任务进程、60 帧、16 MiB 级任务会话预算。catalog_complete=false 表示目录读取不完整，发现的子进程可能不全。单线程/多线程等待分析的边界为“进程 leader 线索及可见锁请求”；不提供通用死锁证明或业务完成判定。
+
+原始 .locks 文件使用下面的 inspect/chain/range 命令；任务 incident.json 使用 report 命令。报告中的 L 行号是该帧归一化锁文本内的位置，不是 JSON 文件行号，也不是跨帧身份。
 
 ## 第一次运行
 

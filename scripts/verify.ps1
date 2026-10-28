@@ -22,3 +22,5 @@ Invoke-Moon run cmd/main --target js -- chain fixtures/contention.locks 3
 Invoke-Moon run cmd/main --target js -- range fixtures/contention.locks 08:01:42 99 99
 python scripts/verify_cli.py
 if ($LASTEXITCODE -ne 0) { throw 'CLI verification failed' }
+python scripts/verify_task_cli.py
+if ($LASTEXITCODE -ne 0) { throw 'Task CLI verification failed' }

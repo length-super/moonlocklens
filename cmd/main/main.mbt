@@ -13,6 +13,11 @@ fn main {
       set_exit(1)
       return
     }
+    HostError(message) => {
+      report_error(message, None, json_errors)
+      set_exit(1)
+      return
+    }
     e => {
       report_error(e.to_string(), None, json_errors)
       set_exit(1)

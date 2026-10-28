@@ -33,7 +33,7 @@ extern "js" fn stderr(text : String) -> Unit =
 fn read_input(path : String) -> String raise {
   let r = read_text(path)
   if r[0] != "ok" {
-    fail(r[1])
+    raise HostError(r[1])
   }
   match r[1].strip_prefix("\u{FEFF}") {
     Some(s) => s.to_owned()

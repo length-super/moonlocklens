@@ -1,10 +1,10 @@
-# 本地交付 0.2.0
+# 本地交付 0.3.0
 
 源码模块：local/moonlocklens，正式发布 namespace 待定。版本与本地归档一致，仓库地址未编造。
 
-面向使用者的免编译运行包为 `output/cli/moonlocklens-0.2.0.zip`，已解压目录为 `output/cli/moonlocklens-0.2.0/`。包含 lib/main.cjs、Windows/POSIX 启动器、说明、许可和 synthetic fixture，共 7 个文件；只需要 Node.js 22+，不需要 MoonBit、Python或联网。Windows 与 Linux 均实际运行解包副本。
+面向使用者的免编译运行包为 `output/cli/moonlocklens-0.3.0.zip`，已解压目录为 `output/cli/moonlocklens-0.3.0/`。包含 lib/main.cjs、Windows/POSIX 启动器、说明、许可和 synthetic fixture，共 8 个文件；只需要 Node.js 22+，不需要 MoonBit、Python或联网。Windows 与 Linux 均实际运行解包副本。
 
-库的源码归档由 `moon package` 生成 `_build/publish/local-moonlocklens-0.2.0.zip`，副本位于 `release-local/local-moonlocklens-0.2.0.zip`。实际文件数量和清单位于 release-local/package-files.json、package-evidence.json。独立消费者仅使用 ZIP 解包副本，不引用工作树；两个后端公共 API 和解包 CLI 均通过。
+库的源码归档由 `moon package` 生成 `_build/publish/local-moonlocklens-0.3.0.zip`，副本位于 `release-local/local-moonlocklens-0.3.0.zip`。实际文件数量和清单位于 release-local/package-files.json、package-evidence.json。独立消费者仅使用 ZIP 解包副本，不引用工作树；两个后端公共 API 和解包 CLI 均通过。
 
 实际归档排除了 .git、.github、research、release-local、_build、target、tmp、output 和缓存。保留源码、接口、fixture、README、许可证、可复现检查脚本和必要说明。PDF 单独位于 output/pdf/submission-proposal.pdf，未进入库包；申报 Markdown 保留。
 

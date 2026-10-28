@@ -12,6 +12,12 @@ pub fn file_key(String) -> FileKey raise LockError
 
 pub fn parse(String, max_chars? : Int, max_records? : Int, max_depth? : Int) -> Snapshot raise LockError
 
+pub fn parse_process(String, wchan? : String, wchan_error? : String) -> ProcessInfo raise LockError
+
+pub fn parse_task_capture(String) -> TaskCapture raise LockError
+
+pub fn task_capture(Int) -> TaskCapture raise LockError
+
 // Errors
 pub suberror LockError {
   Invalid(line~ : Int, reason~ : String)
@@ -102,6 +108,20 @@ pub fn Owner::not_equal(Self, Self) -> Bool
 pub fn Owner::to_json(Self) -> Json
 pub fn Owner::to_repr(Self) -> @debug.Repr
 
+pub(all) struct ProcessInfo {
+  pid : Int
+  parent_pid : Int
+  name : String
+  state : String
+  start_ticks : String
+  wchan : String
+  wchan_status : String
+} derive(Eq, ToJson, @debug.Debug)
+pub fn ProcessInfo::equal(Self, Self) -> Bool
+pub fn ProcessInfo::not_equal(Self, Self) -> Bool
+pub fn ProcessInfo::to_json(Self) -> Json
+pub fn ProcessInfo::to_repr(Self) -> @debug.Repr
+
 pub struct Snapshot {
   // private fields
 } derive(@debug.Debug)
@@ -116,6 +136,63 @@ pub fn Snapshot::to_json(Self) -> Json
 pub fn Snapshot::to_repr(Self) -> @debug.Repr
 pub fn Snapshot::wait_chain(Self, Int) -> Array[Entry] raise LockError
 pub fn Snapshot::with_blockers(Self, ArrayView[Int]) -> Array[Entry] raise LockError
+
+pub struct TaskCapture {
+  // private fields
+}
+pub fn TaskCapture::record(Self, String) -> Unit raise LockError
+pub fn TaskCapture::report(Self) -> TaskReport raise LockError
+pub fn TaskCapture::sample_count(Self) -> Int
+pub fn TaskCapture::to_json(Self) -> Json
+
+pub(all) struct TaskFrameReport {
+  elapsed_ms : Int64
+  root_state : String
+  processes : Array[TaskProcess]
+  blocker_processes : Array[ProcessInfo]
+  issues : Array[String]
+} derive(ToJson, @debug.Debug)
+pub fn TaskFrameReport::to_json(Self) -> Json
+pub fn TaskFrameReport::to_repr(Self) -> @debug.Repr
+
+pub(all) struct TaskProcess {
+  info : ProcessInfo
+  finding : String
+  waiting_lines : Array[Int]
+  requests : Array[Entry]
+  blockers : Array[Entry]
+  blocker_identities : Array[String]
+  files : Array[FileKey]
+} derive(ToJson, @debug.Debug)
+pub fn TaskProcess::to_json(Self) -> Json
+pub fn TaskProcess::to_repr(Self) -> @debug.Repr
+
+pub(all) struct TaskReport {
+  root_pid : Int
+  root_start_ticks : String
+  started_at : String
+  sample_count : Int
+  observed_span_ms : Int64
+  max_consecutive_wait_samples : Int
+  max_sampled_wait_span_ms : Int64
+  frames : Array[TaskFrameReport]
+  transitions : Array[TaskTransition]
+  next_steps : Array[String]
+} derive(ToJson, @debug.Debug)
+pub fn TaskReport::to_json(Self) -> Json
+pub fn TaskReport::to_markdown(Self) -> String
+pub fn TaskReport::to_repr(Self) -> @debug.Repr
+
+pub(all) struct TaskTransition {
+  at_ms : Int64
+  pid : Int
+  start_ticks : String
+  change : String
+  before : String
+  after : String
+} derive(ToJson, @debug.Debug)
+pub fn TaskTransition::to_json(Self) -> Json
+pub fn TaskTransition::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 
