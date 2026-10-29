@@ -2,7 +2,7 @@
 
 **项目**：MoonLockLens，Linux 任务等待与文件争用诊断、连续观察及离线报告。
 
-**GitHub / 发布账号**：length-super。**仓库**：https://github.com/length-super/moonlocklens 。**模块**：length-super/moonlocklens@0.3.0。**状态**：发布验证中；未报名，未取得官方审核结果。参赛团队资料待本人确认。
+**GitHub / 发布账号**：length-super。**仓库**：https://github.com/length-super/moonlocklens 。**模块**：length-super/moonlocklens@0.3.0。**状态**：GitHub 与 Mooncakes 已发布，CI 与注册表安装验证通过；未报名，未取得官方审核结果。参赛团队资料待本人确认。
 
 **问题**：构建缓存、后台任务或数据库工具卡住时，单一 PID/文件清单不足以解释多个字节区间锁和嵌套等待。OFD 锁还不能直接归到一个进程。
 

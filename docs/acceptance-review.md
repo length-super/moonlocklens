@@ -16,10 +16,10 @@
 
 ## 公开发布状态
 
-用户已指定并授权 length-super 的 GitHub/Mooncakes 发布。仓库 https://github.com/length-super/moonlocklens 已创建；上传登录账号已通过 GitHub API 核实。正式命名空间、后续提交署名及文档已统一；此前本地自动化历史保持真实归属。默认分支 CI 与确切版本注册表消费正在验证，最终结果见 test-evidence/publishing.md。
+用户已指定并授权 length-super 的 GitHub/Mooncakes 发布。仓库 https://github.com/length-super/moonlocklens 已创建；上传登录账号已通过 GitHub API 核实。正式命名空间、后续提交署名及文档已统一；此前本地自动化历史保持真实归属。发布代码公开 CI、Mooncakes 0.3.0 正式发布、双后端注册表消费和下载包 Linux 实测均通过，结果见 [发布验证](test-evidence/publishing.md)。
 
 ## 官方报名或审核状态
 
 未报名、未入群、无官方审核结论。十月规则 2026-10-29 已通过官方仓库 App.tsx 联网复核，截止 2026-10-31、最多提交 3 次、每队不超过 3 人。用户实际已用报名次数与参赛身份未知。公开持续开发、正式可访问仓库、参赛者理解 AI 产物确认属于后续正式参赛事项，不能用本地就绪替代。
 
-结论：本地交付就绪，公开发布验证中；正式参赛未执行。
+结论：本地交付就绪，公开发布与安装验证完成；正式参赛未执行。
