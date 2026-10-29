@@ -1,5 +1,12 @@
 # Changes
 
+## 0.4.0 - 2026-10-29
+
+- 新增同任务会话比较，核对处理前后观测，保护 scope、PID/starttime 与缺口语义。
+- 新增文件级 watch-file/file-report，支持未知 PID/OFD owner 与路径 inode 替换提示。
+- 新增 gate 与库评估 API，依据连续采样阈值输出 pass/fail/inconclusive 及 0/3/4 退出码。
+- 补充真实 Linux 三类锁释放/路径替换验证、场景指南和跨平台消费；核心两个后端各 30 项测试。
+
 ## 0.3.0 - 2026-10-28
 
 - 将独立应用范围扩展为任务等待与文件争用诊断：diagnose 根 PID、watch 连续采样、report 离线报告。

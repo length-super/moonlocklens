@@ -61,15 +61,17 @@ def section(title, body):
     _, h = p.wrap(W-86, H)
     p.drawOn(c, 43, y-h+10)
     y -= h
-    y -= 14
+    y -= 9
 
 
-section("01  真实问题", "构建、后台作业或数据库维护任务卡住时，用户需要从任务 PID 找到实际等待的子进程、锁请求和外部阻塞者，并记录后续是否恢复。")
-section("02  独立贡献", "原创纯 MoonBit 核心：有界解析 stat/wchan/locks，关联当前任务树、锁请求和逐层阻塞证据；用 PID+starttime 区分身份，记录状态及阻塞证据变化。保留等待树、影响排名与字节区间 API。")
-section("03  可以运行的交付", "0.3.0 提供免编译 Node 包和 Windows/Linux 启动器。diagnose/watch/report 串起任务诊断、连续采样、会话保存与文本/JSON/Markdown 回放。实际采集需要 Linux；库支持 Wasm-GC / JS，仓库位于 length-super/moonlocklens。")
-section("04  验证与演示", "两个后端各 24 项核心测试，格式、构建、API 与 CLI 通过；实际 ZIP 消费和独立运行包通过。真实 Linux 父子任务被外部 FLOCK 阻塞，五帧观察验证第二帧释放后等待消失；保留 POSIX/FLOCK/OFD 独立对照。")
-section("05  范围与维护", "只读有界采样，namespace 可见性有限；wchan 为线索，采样跨度非精确持续等待时长。序号不作跨帧身份；区间重叠非授予预测，等待树非死锁证明。AI 辅助开发，参赛者需掌握关键架构与边界。")
-section("06  申报信息", "GitHub 与 Mooncakes 发布账号：length-super。模块 length-super/moonlocklens@0.3.0；公开仓库 github.com/length-super/moonlocklens。发布及安装证据见 docs/release.md。十月截止 2026-10-31；尚未报名、无官方审核结果，团队资料待本人确认。")
+section("01  项目名称", "MoonLockLens——Linux 任务等待与文件争用诊断工具，当前版本 0.4.0。")
+section("02  项目简介", "从任务 PID 或文件路径出发，关联子进程、锁请求与外部阻塞者，通过连续采样、现场保存和离线报告，帮助开发与运维定位卡住的任务。")
+section("03  项目方向与通用性", "基础软件与开发者工具。适用于使用 POSIX/FLOCK/OFD 文件锁的构建、批处理和多进程程序，无需修改被观察程序；Linux 采集，Windows/Linux 回放，提供 MoonBit 库与 Node CLI。")
+section("04  三个完整使用场景", "构建与 CI：共享缓存争用导致流水线停滞，按文件采样找到阻塞证据并输出阈值结果。定时任务：备份或导入重叠时，从任务树定位等待者及外部持锁者，核对处理后的变化。故障复盘：多进程程序间歇卡住时保存会话，离线还原等待链并分享 Markdown/JSON 报告。")
+section("05  核心功能", "有界解析 stat/wchan/locks；任务身份保护、直接/传递等待链、文件字节区间查询；文件级观察、同任务前后比较、文本/JSON/Markdown 回放；CI 阈值区分通过、违规与证据不足。双后端各 30 项核心测试及真实 Linux 锁竞争验证通过。")
+section("06  原创性质", "原创 MIT 项目。解析、关联、时间线及报告在 MoonBit 实现，Node.js 仅负责宿主读取、时钟和命令行输出；AI 辅助开发。")
+section("07  移植与参考说明", "非移植项目。参考 Linux procfs 文档，以 util-linux lslocks 作为独立测试对照，未复制实现；来源与许可见 THIRD_PARTY.md。wchan 为线索，采样跨度非精确等待时长。")
+section("08  仓库与提交记录", "github.com/length-super/moonlocklens；已保留至少 10 条真实提交，覆盖核心、实测、发布及三项功能扩展。发布账号 length-super，模块 length-super/moonlocklens@0.4.0。公开 CI、安装与版本结果见 docs/release.md；尚未正式报名或取得审核结论。")
 assert y > 44, y
 c.setStrokeColor(colors.HexColor("#dbe4ed"))
 c.line(43, 44, W-43, 44)

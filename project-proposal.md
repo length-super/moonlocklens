@@ -1,5 +1,7 @@
 # MoonLockLens
 
+0.4.0 扩展文件入口、同任务处理前后会话比较及 CI/定时任务阈值检查。面向构建缓存、批处理重叠、多进程争用、故障转交和工具集成；操作见 docs/scenarios.md，真实验证见 docs/test-evidence/scope-stage.md。
+
 0.3.0 已扩展为 Linux 任务等待与文件争用诊断：从根任务 PID 进入，查看当前后代、锁请求和外部阻塞者；连续采样记录等待消失、状态或阻塞证据变化；保存会话后跨平台生成文本/JSON/Markdown。进程身份、证据缺失和采样边界在纯 MoonBit 核心中处理。流程见 docs/task-guide.md，验证见 docs/test-evidence/task-stage.md。该阶段扩展排查任务的完整流程，不宣称证明所有 CPU/I/O/网络等待根因。下文保留原有 MVP 的设计依据。
 
 0.2.0 已补齐实际使用流程：免编译 Node 运行包、默认文本/显式 JSON、PID/实际文件/等待筛选、阻塞者上下文、stdin/BOM、独占现场保存和离线回放、自动化等待退出码。保留库兼容性，新增 matching/with_blockers。运行说明见 docs/cli-guide.md，续验见 docs/test-evidence/usability.md。

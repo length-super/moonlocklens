@@ -1,19 +1,21 @@
-# MoonLockLens 项目申报草稿
+# MoonLockLens 项目申报书
 
-**项目**：MoonLockLens，Linux 任务等待与文件争用诊断、连续观察及离线报告。
+**1. 项目名称**：MoonLockLens——Linux 任务等待与文件争用诊断工具。
 
-**GitHub / 发布账号**：length-super。**仓库**：https://github.com/length-super/moonlocklens 。**模块**：length-super/moonlocklens@0.3.0。**状态**：GitHub 与 Mooncakes 已发布，CI 与注册表安装验证通过；未报名，未取得官方审核结果。参赛团队资料待本人确认。
+**2. 项目简介**：面向 Linux 任务长时间无进展的排障需求，从任务 PID 出发，关联子进程、文件锁请求和外部持锁者，解释等待关系；通过连续采样、现场保存和离线报告，帮助开发与运维人员缩小排查范围。核心采用 MoonBit，提供命令行工具和可集成的库，当前版本为 0.4.0。
 
-**问题**：构建缓存、后台任务或数据库工具卡住时，单一 PID/文件清单不足以解释多个字节区间锁和嵌套等待。OFD 锁还不能直接归到一个进程。
+**3. 项目方向与通用性**：基础软件与开发者工具。基于 Linux procfs 和文件锁信息，适用于使用 POSIX、FLOCK、OFD 锁的构建、批处理及多进程程序，无需修改被观察程序；Linux 负责采集，Windows/Linux 均可回放。其他等待原因提供进程状态与睡眠位置线索，文件锁等待为重点诊断对象。
 
-**成果（0.3.0）**：纯 MoonBit 有界解析 `/proc/locks`，保留 POSIX/FLOCK/OFD/lease 与未知字段；还原直接及传递等待关系，输出源行阻塞链与等待规模排名；按 device/inode 和 inclusive byte range 查询。可独立解压运行的 Node CLI 提供文本/JSON、PID/实际文件定位、等待筛选、stdin、现场保存与回放、自动化退出码；附 synthetic 示例、必要测试及真实 Linux oracle。
+**4. 预期使用场景**：
 
-**任务流程**：从根 PID 选择当前后代，关联锁请求和外部持有者；diagnose/watch/report 支持连续观察、会话保存、文本/JSON/Markdown 回放。PID+starttime 区分进程身份，记录等待消失、状态及阻塞证据变化。真实 Linux 五帧观察验证释放后的恢复。wchan 仅为线索，采样跨度不是精确持续等待时长。
+- **构建与 CI 排障**：流水线因共享缓存争用迟迟不结束时，从构建根 PID 查找等待的工作进程和外部持锁者，定位涉及的文件与锁区间，辅助决定下一步检查对象。
+- **定时任务重叠排查**：新一轮备份、导入或批处理任务卡住时，采集任务树及锁证据，检查是否被上一轮进程阻塞；持续观察处理前后的变化，核对原有等待是否消失。
+- **多进程服务故障复盘**：多个工作进程访问同一文件、部分进程间歇性停滞时，保存多次采样会话，离线还原直接与传递等待链，导出 Markdown/JSON 报告供开发与运维共同分析。
 
-**独立贡献**：原创实现，非 POSIX FFI 或 lslocks 的移植。参考内核格式，新增 MoonBit 可组合快照模型、逐层 witness 和区间 API。相邻库及淘汰方向见生态报告；与已有四个本地项目的对象和目标用户任务不同。
+**5. 拟实现的核心功能**：①有界解析进程及锁信息，识别当前任务树与 PID 复用；②关联锁请求、直接/传递阻塞者及文件字节区间；③按 PID、文件和等待状态筛选；④连续采样并记录等待及状态变化；⑤保存现场、跨平台回放、生成文本/JSON/Markdown 报告；⑥提供同任务会话比较、文件级持续观察及 CI 等待阈值检查，区分通过、违规和证据不足；提供 MoonBit API 和脚本退出码。已完成双后端各 30 项核心测试、真实 Linux 锁竞争验证和注册表独立安装验证。
 
-**验证**：Windows Wasm-GC、JS 核心各 24 项测试，check/build/fmt/API/CLI；独立运行包启动器、实际源码归档消费，以及 Linux POSIX/FLOCK/OFD 锁、按路径/PID 定位、capture/replay 对照。当前结果见 docs/test-evidence/task-stage.md。
+**6. 项目性质**：原创项目，采用 MIT 许可证。解析、证据关联、等待树、时间线及报告逻辑由 MoonBit 实现，Node.js 负责宿主读取和命令行输入输出；AI 辅助开发。
 
-**边界**：只读快照；namespace 可见性有限；ordinal 非跨时间身份；OFD PID -1 明确未知；range overlap 非授予预测；等待树非死锁证明。MIT，无第三方运行模块依赖。参赛者需掌握架构与 AI 产物。
+**7. 移植与参考说明**：非移植项目。参考 [Linux proc_locks 文档](https://man7.org/linux/man-pages/man5/proc_locks.5.html) 的接口语义，以 util-linux 的 lslocks 作为测试对照，未复制其实现；来源与许可说明见仓库 THIRD_PARTY.md。
 
-**本期**：2026 十月，10 月 31 日报名/验收截止、最多 3 次提交、每队不超过 3 人（2026-10-23 官网源码复核）。2026-10-29 用户授权公开发布；此前为本地开发，不追补公开时间。报名、入群与官方审核未执行。
+**8. GitHub 仓库与提交记录**：[length-super/moonlocklens](https://github.com/length-super/moonlocklens)。已保留不少于 **10 条真实提交**，覆盖调研、核心实现、Linux 实测、独立运行包、任务诊断、正式发布，以及会话比较、文件级观察和自动化阈值三项扩展；[提交历史](https://github.com/length-super/moonlocklens/commits/main/) 可逐项核查。

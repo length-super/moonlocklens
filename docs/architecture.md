@@ -25,3 +25,5 @@ queries.mbt 按父下标还原 witness；逆序累计子树规模，每个等待
 宿主边界：cmd/main 的 JS FFI 仅参数、UTF-8 文件读取、platform 与错误退出。所有字段、层级、整数、范围和影响计算均在 MoonBit。Node 库读取失败显式退出；不提供 host 凭据、全机 fd 扫描或 C 桥。
 
 AI 辅助用于设计、编码、测试和文档。参赛者需能说明：为什么不能把 ordinal 当稳定 ID；OFD 为何不能归属单一 PID；kernel 缩进如何得到直接 blocker；区间相交为何不等于锁授予冲突；链为何不构成死锁结论。尚未取得参赛者本人理解确认，不代其声称官方 AI 可解释项已通过。
+
+0.4.0：task_compare.mbt 仅比较相同 boot/scope/根 PID+starttime 的会话末帧，按同身份进程计算锁等待消失；丢失身份单独标记。file_capture.mbt 首帧绑定原文件 device/inode，随后路径改名/替换不切换对象，规范化只保留该文件的锁及阻塞上下文，不保存路径。file_commands.mbt 的 JS 仅采集 stat/locks/时钟；会话预算、scope、筛选、统计与报告仍在 MoonBit。assessment.mbt 把窗口内连续观测与可见性缺口转换为 pass/fail/inconclusive；达到阈值的实证优先，未达到且有缺口/样本不足时不通过。

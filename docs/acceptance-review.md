@@ -1,6 +1,10 @@
 # MoonLockLens 验收与发布复核
 
-2026-10-29，项目版本 0.3.0，正式模块 length-super/moonlocklens。
+2026-10-29，项目版本 0.4.0，正式模块 length-super/moonlocklens。
+
+## 0.4.0 实质改进
+
+三项新能力：同任务会话比较、文件级连续观察、CI/定时任务等待阈值。核心两个后端各 30 项测试与 Linux 实测通过，公开历史已至少 10 条提交；见 [场景指南](scenarios.md) 和 [扩展验收](test-evidence/scope-stage.md)。0.4.0 正式发布结果见 release.md，以下保留前阶段基线。
 
 ## 本地材料就绪
 

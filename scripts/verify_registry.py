@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
 """Install the exact published version without a local workspace override."""
 import json
+import os
 from pathlib import Path
 import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULE = "length-super/moonlocklens"
-VERSION = "0.3.0"
+VERSION = os.environ.get("MOONLOCKLENS_REGISTRY_VERSION", "0.4.0")
 
 
 def main():
-    consumer = ROOT / "release-local/registry-consumer-0.3.0"
+    assert VERSION in ("0.3.0", "0.4.0"), "unsupported verification fixture version"
+    consumer = ROOT / "release-local" / ("registry-consumer-" + VERSION)
     consumer.mkdir(parents=True, exist_ok=True)
     for parent in (consumer, *consumer.parents):
         assert not (parent / "moon.work").exists(), "registry check must not inherit a workspace"
@@ -39,6 +41,10 @@ test "registry lock API" {
 }
 '''
     tests += '\n///|\ntest "registry task report API" {\n  let c = @locks.parse_task_capture(' + wire + ')\n  let r = c.report()\n  assert_eq(r.sample_count, 3)\n  assert_eq(r.max_consecutive_wait_samples, 2)\n  assert_eq(r.frames[0].processes[1].requests[0].parent_line, Some(1))\n  assert_true(r.to_markdown().contains("Observed transitions"))\n}\n'
+    if VERSION == "0.4.0":
+        file_wire = json.dumps((ROOT / "fixtures/file-session.json").read_text(encoding="utf8"))
+        tests += '\n///|\ntest "registry comparison and CI policy" {\n  let c = @locks.parse_task_capture(' + wire + ')\n  assert_eq(c.compare(c).changes.length(), 0)\n  assert_eq(c.assess().status, "fail")\n  assert_eq(c.assess(wait_samples=3).status, "pass")\n}\n'
+        tests += '\n///|\ntest "registry file capture and CI policy" {\n  let c = @locks.parse_file_capture(' + file_wire + ')\n  assert_eq(c.report().peak_waiting_records, 1)\n  assert_eq(c.report().frames[0].entries[1].owner, @locks.OpenDescription)\n  assert_eq(c.assess().status, "fail")\n  assert_eq(@locks.assess_capture(c.to_json().stringify(), wait_samples=3).status, "pass")\n}\n'
     (consumer / "consumer_test.mbt").write_text(tests, encoding="utf8")
     results = {target: run("moon", "test", "--target", target, "--deny-warn") for target in ("wasm-gc", "js")}
     evidence = {"module": MODULE, "version": VERSION, "source": "public registry, no moon.work override", "dependency_tree": tree, "consumer": results}
