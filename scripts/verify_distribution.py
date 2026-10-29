@@ -14,7 +14,7 @@ def main():
     parent = ROOT / "release-local/cli-validation"
     parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(archive) as z:
-        assert len(z.namelist()) == 8
+        assert len(z.namelist()) == 9
         z.extractall(parent)
     folder = parent / "moonlocklens-0.4.0"
     cli = folder / "lib/main.cjs"
@@ -23,12 +23,14 @@ def main():
     assert json.loads(p.stdout)["matched_lines"] == [3] and not p.stderr
     p = subprocess.run(["node", str(cli), "report", str(folder / "fixtures/task-session.json"), "--json"], cwd=parent, capture_output=True, text=True, check=True)
     assert json.loads(p.stdout)["report"]["max_consecutive_wait_samples"] == 2
+    p = subprocess.run(["node", str(cli), "file-report", str(folder / "fixtures/file-session.json"), "--json"], cwd=parent, capture_output=True, text=True, check=True)
+    assert json.loads(p.stdout)["report"]["peak_waiting_records"] == 1
     if os.name == "nt":
         p = subprocess.run([os.environ.get("COMSPEC", "cmd.exe"), "/d", "/c", r"moonlocklens-0.4.0\moonlocklens.cmd", "--version"], cwd=parent, capture_output=True, text=True, check=True)
     else:
         p = subprocess.run(["sh", str(folder / "moonlocklens"), "--version"], cwd=parent, capture_output=True, text=True, check=True)
     assert "0.4.0" in p.stdout
-    result = {"status": "passed", "archive": archive.name, "files": 8, "node_only_consumer": "passed", "task_report_consumer": "passed", "launcher": "passed"}
+    result = {"status": "passed", "archive": archive.name, "files": 9, "node_only_consumer": "passed", "task_and_file_report_consumer": "passed", "launcher": "passed"}
     (ROOT / "release-local/distribution-evidence.json").write_text(json.dumps(result, indent=2))
     print(json.dumps(result))
 

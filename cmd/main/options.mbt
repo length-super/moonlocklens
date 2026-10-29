@@ -175,6 +175,8 @@ fn help() -> Unit {
     #|  moonlocklens watch PID --samples 10 --interval 500 --output incident.json
     #|  moonlocklens report incident.json [--markdown | --json]
     #|  moonlocklens compare BEFORE.json AFTER.json [--json | --markdown]
+    #|  moonlocklens watch-file PATH --samples 10 --interval 500 --output file.json
+    #|  moonlocklens file-report file.json [--json | --markdown]
     #|
     #|  FILE may be '-' for UTF-8 stdin; source LINE is 1-based.
     #|  KEY is hex-major:hex-minor:decimal-inode. Range endpoints are inclusive.

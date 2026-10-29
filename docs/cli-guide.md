@@ -99,3 +99,11 @@ KEY 的 major/minor 为十六进制，inode 为十进制。起止字节均包含
 - 文件名以 -- 开头：把选项放前面，使用 `inspect --json -- --name.locks`。
 
 工具只读观察，不解锁、不杀进程；等待链不是死锁证明。离线范围查询可以跨平台执行，真实采集依赖 Linux procfs 的可见性。
+
+## 不知道 PID 时按文件观察（0.4.0）
+
+Linux：`moonlocklens watch-file /path/to/cache.lock --samples 10 --interval 500 --output file.json`。离线回放：`moonlocklens file-report file.json --markdown`，也可使用 `--json` 或 `--fail-on-wait`。采样次数、间隔和新建会话文件约束与 watch 一致。
+
+保存的 moonlocklens-file/1 会话只保留原 device/inode 的锁及阻塞上下文，不保存路径、无关锁或进程 catalog。无需 PID，因此包括 OFD unknown owner。报告中的 waiting_records 是等待记录数，不是独立进程数。
+
+路径替换为另一 inode 时标记 identity_changed 并继续观察原文件，不悄悄换对象；文件删除/不可读或锁证据缺失均显式记录。文件报告 JSON 为 moonlocklens-file-report/1。

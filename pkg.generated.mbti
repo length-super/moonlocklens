@@ -8,9 +8,13 @@ import {
 // Values
 pub fn byte_range(String, String) -> ByteRange raise LockError
 
+pub fn file_capture() -> FileCapture
+
 pub fn file_key(String) -> FileKey raise LockError
 
 pub fn parse(String, max_chars? : Int, max_records? : Int, max_depth? : Int) -> Snapshot raise LockError
+
+pub fn parse_file_capture(String) -> FileCapture raise LockError
 
 pub fn parse_process(String, wchan? : String, wchan_error? : String) -> ProcessInfo raise LockError
 
@@ -64,6 +68,22 @@ pub fn Entry::not_equal(Self, Self) -> Bool
 pub fn Entry::to_json(Self) -> Json
 pub fn Entry::to_repr(Self) -> @debug.Repr
 
+pub struct FileCapture {
+  // private fields
+}
+pub fn FileCapture::record(Self, String) -> Unit raise LockError
+pub fn FileCapture::report(Self) -> FileReport raise LockError
+pub fn FileCapture::to_json(Self) -> Json
+
+pub(all) struct FileFrameReport {
+  elapsed_ms : Int64
+  path_state : String
+  waiting_records : Int
+  entries : Array[Entry]
+  issues : Array[String]
+} derive(ToJson)
+pub fn FileFrameReport::to_json(Self) -> Json
+
 pub(all) struct FileKey {
   major : UInt
   minor : UInt
@@ -74,6 +94,17 @@ pub fn FileKey::not_equal(Self, Self) -> Bool
 pub fn FileKey::to_json(Self) -> Json
 pub fn FileKey::to_repr(Self) -> @debug.Repr
 pub impl ToJson for FileKey
+
+pub(all) struct FileReport {
+  file : FileKey
+  sample_count : Int
+  observed_span_ms : Int64
+  peak_waiting_records : Int
+  max_consecutive_wait_samples : Int
+  frames : Array[FileFrameReport]
+} derive(ToJson)
+pub fn FileReport::to_json(Self) -> Json
+pub fn FileReport::to_markdown(Self) -> String
 
 pub(all) enum LockKind {
   Posix

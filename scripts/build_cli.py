@@ -24,6 +24,7 @@ def main():
     (folder / "fixtures").mkdir(exist_ok=True)
     shutil.copy2(ROOT / "fixtures/contention.locks", folder / "fixtures/contention.locks")
     shutil.copy2(ROOT / "fixtures/task-session.json", folder / "fixtures/task-session.json")
+    shutil.copy2(ROOT / "fixtures/file-session.json", folder / "fixtures/file-session.json")
     archive = folder.parent / (folder.name + ".zip")
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as z:
         for file in sorted(folder.rglob("*")):

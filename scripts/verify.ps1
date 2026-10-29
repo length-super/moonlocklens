@@ -24,3 +24,6 @@ python scripts/verify_cli.py
 if ($LASTEXITCODE -ne 0) { throw 'CLI verification failed' }
 python scripts/verify_task_cli.py
 if ($LASTEXITCODE -ne 0) { throw 'Task CLI verification failed' }
+
+python scripts/verify_file_cli.py
+if ($LASTEXITCODE -ne 0) { throw 'File CLI verification failed' }

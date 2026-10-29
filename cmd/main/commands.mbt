@@ -1,5 +1,9 @@
 ///|
 fn run(options : Options) -> Int32 raise {
+  if options.args.get(0) is Some(command) &&
+    (command == "watch-file" || command == "file-report") {
+    return file_command(options)
+  }
   if options.args.get(0) == Some("compare") {
     return compare_command(options)
   }

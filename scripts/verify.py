@@ -24,6 +24,7 @@ def main():
         run("moon", "run", "cmd/main", "--target", "js", "--", *args)
     run(sys.executable, "scripts/verify_cli.py")
     run(sys.executable, "scripts/verify_task_cli.py")
+    run(sys.executable, "scripts/verify_file_cli.py")
 
 
 if __name__ == "__main__":
