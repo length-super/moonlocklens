@@ -1,5 +1,11 @@
 ///|
 fn run(options : Options) -> Int32 raise {
+  if options.args.get(0) == Some("gate") {
+    return gate_command(options)
+  }
+  if options.wait_samples is Some(_) {
+    raise Usage("--wait-samples is only for gate")
+  }
   if options.args.get(0) is Some(command) &&
     (command == "watch-file" || command == "file-report") {
     return file_command(options)

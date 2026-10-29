@@ -25,6 +25,8 @@ def main():
     assert json.loads(p.stdout)["report"]["max_consecutive_wait_samples"] == 2
     p = subprocess.run(["node", str(cli), "file-report", str(folder / "fixtures/file-session.json"), "--json"], cwd=parent, capture_output=True, text=True, check=True)
     assert json.loads(p.stdout)["report"]["peak_waiting_records"] == 1
+    p = subprocess.run(["node", str(cli), "gate", str(folder / "fixtures/file-session.json"), "--json"], cwd=parent, capture_output=True, text=True)
+    assert p.returncode == 3 and json.loads(p.stdout)["assessment"]["status"] == "fail"
     if os.name == "nt":
         p = subprocess.run([os.environ.get("COMSPEC", "cmd.exe"), "/d", "/c", r"moonlocklens-0.4.0\moonlocklens.cmd", "--version"], cwd=parent, capture_output=True, text=True, check=True)
     else:

@@ -6,6 +6,8 @@ import {
 }
 
 // Values
+pub fn assess_capture(String, wait_samples? : Int) -> WaitAssessment raise LockError
+
 pub fn byte_range(String, String) -> ByteRange raise LockError
 
 pub fn file_capture() -> FileCapture
@@ -71,6 +73,7 @@ pub fn Entry::to_repr(Self) -> @debug.Repr
 pub struct FileCapture {
   // private fields
 }
+pub fn FileCapture::assess(Self, wait_samples? : Int) -> WaitAssessment raise LockError
 pub fn FileCapture::record(Self, String) -> Unit raise LockError
 pub fn FileCapture::report(Self) -> FileReport raise LockError
 pub fn FileCapture::to_json(Self) -> Json
@@ -171,6 +174,7 @@ pub fn Snapshot::with_blockers(Self, ArrayView[Int]) -> Array[Entry] raise LockE
 pub struct TaskCapture {
   // private fields
 }
+pub fn TaskCapture::assess(Self, wait_samples? : Int) -> WaitAssessment raise LockError
 pub fn TaskCapture::compare(Self, Self) -> TaskComparison raise LockError
 pub fn TaskCapture::record(Self, String) -> Unit raise LockError
 pub fn TaskCapture::report(Self) -> TaskReport raise LockError
@@ -248,6 +252,16 @@ pub(all) struct TaskTransition {
 } derive(ToJson, @debug.Debug)
 pub fn TaskTransition::to_json(Self) -> Json
 pub fn TaskTransition::to_repr(Self) -> @debug.Repr
+
+pub(all) struct WaitAssessment {
+  status : String
+  threshold_samples : Int
+  sample_count : Int
+  observed_streak : Int
+  evidence_gaps : Int
+  reason : String
+} derive(ToJson)
+pub fn WaitAssessment::to_json(Self) -> Json
 
 // Type aliases
 

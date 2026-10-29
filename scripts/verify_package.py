@@ -62,7 +62,7 @@ test "archive consumer sees public constructors and methods" {
 ''')
     wire = json.dumps((dependency / "fixtures/task-session.json").read_text(encoding="utf8"))
     with (consumer / "consumer_test.mbt").open("a", encoding="utf8") as stream:
-        stream.write('\n///|\ntest "archive task report API" {\n  let c = @locks.parse_task_capture(' + wire + ')\n  assert_eq(c.report().max_consecutive_wait_samples, 2)\n  assert_true(c.report().to_markdown().contains("Observed transitions"))\n}\n')
+        stream.write('\n///|\ntest "archive task report API" {\n  let c = @locks.parse_task_capture(' + wire + ')\n  assert_eq(c.report().max_consecutive_wait_samples, 2)\n  assert_eq(c.assess().status, "fail")\n  assert_eq(c.compare(c).changes.length(), 0)\n  assert_true(c.report().to_markdown().contains("Observed transitions"))\n}\n')
     results = {}
     file_wire = json.dumps((dependency / "fixtures/file-session.json").read_text(encoding="utf8"))
     with (consumer / "consumer_test.mbt").open("a", encoding="utf8") as stream:

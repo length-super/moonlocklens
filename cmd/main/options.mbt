@@ -21,6 +21,7 @@ struct Options {
   file : String?
   waiting : Bool
   fail_on_wait : Bool
+  wait_samples : Int32?
 }
 
 ///|
@@ -64,6 +65,7 @@ fn parse_options(input : ArrayView[String]) -> Options raise {
   let mut file = None
   let mut waiting = false
   let mut fail_on_wait = false
+  let mut wait_samples = None
   let mut positional = false
   for i = 0; i < input.length(); {
     let arg = input[i]
@@ -109,6 +111,13 @@ fn parse_options(input : ArrayView[String]) -> Options raise {
         continue i + 2
       }
       "--waiting" => waiting = true
+      "--wait-samples" => {
+        if wait_samples is Some(_) || i + 1 >= input.length() {
+          raise Usage("invalid or duplicate --wait-samples")
+        }
+        wait_samples = Some(positive_number(input[i + 1]))
+        continue i + 2
+      }
       "--samples" | "--interval" | "--output" => {
         if i + 1 >= input.length() {
           raise Usage("missing value for " + arg)
@@ -158,6 +167,7 @@ fn parse_options(input : ArrayView[String]) -> Options raise {
     file,
     waiting,
     fail_on_wait,
+    wait_samples,
   }
 }
 
@@ -177,6 +187,8 @@ fn help() -> Unit {
     #|  moonlocklens compare BEFORE.json AFTER.json [--json | --markdown]
     #|  moonlocklens watch-file PATH --samples 10 --interval 500 --output file.json
     #|  moonlocklens file-report file.json [--json | --markdown]
+    #|  moonlocklens gate CAPTURE.json --wait-samples 2 [--json]
+    #|    Gate exit: 0 pass / 3 threshold observed / 4 inconclusive evidence
     #|
     #|  FILE may be '-' for UTF-8 stdin; source LINE is 1-based.
     #|  KEY is hex-major:hex-minor:decimal-inode. Range endpoints are inclusive.

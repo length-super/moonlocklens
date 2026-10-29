@@ -107,3 +107,11 @@ Linux：`moonlocklens watch-file /path/to/cache.lock --samples 10 --interval 500
 保存的 moonlocklens-file/1 会话只保留原 device/inode 的锁及阻塞上下文，不保存路径、无关锁或进程 catalog。无需 PID，因此包括 OFD unknown owner。报告中的 waiting_records 是等待记录数，不是独立进程数。
 
 路径替换为另一 inode 时标记 identity_changed 并继续观察原文件，不悄悄换对象；文件删除/不可读或锁证据缺失均显式记录。文件报告 JSON 为 moonlocklens-file-report/1。
+
+## CI 和定时任务的等待阈值（0.4.0）
+
+先用 watch 或 watch-file 保存会话，然后执行 `moonlocklens gate incident.json --wait-samples 3 --json`。同一任务进程身份连续 3 帧有确认锁等待，或原文件连续 3 帧有等待记录，则 fail，退出 3；可观察帧数足够、证据完整且未达到阈值则 pass，退出 0。
+
+少于阈值帧数、采集中有权限/目录缺口或文件路径更换对象，且未获得足够违规证据时，返回 inconclusive，退出 4。输入/I/O 错误仍为 1，用法错误为 2。阈值为 1..60，默认 2；检查整个窗口，即使末帧恢复，先前达到阈值的等待仍算违规。
+
+pass 仅表示该窗口未观察到达到阈值的锁等待，不判断业务是否成功，不将样本数换算为精确持续等待时长。gate 只读取会话，无需在 CI runner 上保留现场进程或安装额外模块；库提供 TaskCapture::assess、FileCapture::assess 和 assess_capture。

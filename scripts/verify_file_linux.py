@@ -77,6 +77,10 @@ def main():
                 assert len(entries) == 2 and entries[1]['parent_line'] == entries[0]['line']
                 if kind == 'OFDLCK': assert all(e['owner'] == 'OpenDescription' for e in entries)
                 assert capture.stat().st_mode & 0o777 == 0o600
+                for threshold, code in ((2, 3), (5, 0)):
+                    gate = subprocess.run(['node', str(CLI), 'gate', str(capture), '--wait-samples', str(threshold), '--json'], capture_output=True, text=True, timeout=20)
+                    assert gate.returncode == code, (gate.stdout, gate.stderr)
+                    assert json.loads(gate.stdout)['assessment']['sample_count'] == 5
                 original = capture.read_bytes()
                 p = subprocess.run(['node', str(CLI), 'watch-file', str(path), '--samples', '1', '--output', str(capture)], capture_output=True, timeout=20)
                 assert p.returncode == 1 and capture.read_bytes() == original
@@ -105,6 +109,8 @@ def main():
             r = report(capture)
             assert int(r['file']['inode']) == inode and r['frames'][-1]['path_state'] == 'identity_changed'
             assert all(int(e['file']['inode']) == inode for e in r['frames'][-1]['entries'])
+            gate = subprocess.run(['node', str(CLI), 'gate', str(capture), '--json'], capture_output=True, text=True, timeout=20)
+            assert gate.returncode == 4 and json.loads(gate.stdout)['assessment']['status'] == 'inconclusive'
         finally:
             if watch and watch.poll() is None:
                 watch.terminate()

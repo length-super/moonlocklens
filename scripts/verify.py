@@ -25,6 +25,7 @@ def main():
     run(sys.executable, "scripts/verify_cli.py")
     run(sys.executable, "scripts/verify_task_cli.py")
     run(sys.executable, "scripts/verify_file_cli.py")
+    run(sys.executable, "scripts/verify_gate_cli.py")
 
 
 if __name__ == "__main__":
