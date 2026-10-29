@@ -10,3 +10,7 @@
 /.gitattributes
 /output/
 __pycache__/
+
+/submission-proposal.md
+
+/scripts/make_proposal_pdf.py

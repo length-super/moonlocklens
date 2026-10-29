@@ -10,9 +10,9 @@
 
 0.3.0 已完成任务入口→当前后代→锁请求与外部阻塞者→连续观察→保存→跨平台报告。Wasm-GC 与 JS 核心各 24 项测试通过；真实 Linux 五帧观察在第二帧后释放锁，验证等待消失与状态变化。实际源码归档消费者和独立运行包均验证任务报告。当前证据见 [任务阶段验收](test-evidence/task-stage.md)，操作见 [任务诊断指南](task-guide.md)。以下 0.2.0 内容保留为前阶段基线。
 
-采集读取有界 stat/wchan/locks，不扫描 fd、cmdline 或环境。wchan 仅为线索，采样跨度不表示精确连续等待时长；root 身份变化不会把复用 PID 作为原任务。申报文字、PDF、运行包和源代码归档已同步到 0.3.0。
+采集读取有界 stat/wchan/locks，不扫描 fd、cmdline 或环境。wchan 仅为线索，采样跨度不表示精确连续等待时长；root 身份变化不会把复用 PID 作为原任务。0.3.0 运行包和源代码归档已交付；申报材料按用户最新要求仅保留在本地。
 
-源码、MIT 许可、第三方来源、四份调研/方案、公开接口、Wasm-GC/JS 测试、可运行 demo/CLI、真实 Linux 文件锁 oracle、实际 package ZIP 与解包独立消费者、精简申报草稿和一页 PDF 已准备。0.2.0 增加免编译 Node 运行包、文本报告、PID/文件定位、筛选上下文、stdin、capture/replay 和自动化退出码；具体续验结果见 test-evidence/usability.md，0.1.0 基线保留在 local.md。
+源码、MIT 许可、第三方来源、四份调研/方案、公开接口、Wasm-GC/JS 测试、可运行 demo/CLI、真实 Linux 文件锁 oracle、实际 package ZIP 与解包独立消费者已准备；申报书和 PDF 仅在本地维护。0.2.0 增加免编译 Node 运行包、文本报告、PID/文件定位、筛选上下文、stdin、capture/replay 和自动化退出码；具体续验结果见 test-evidence/usability.md，0.1.0 基线保留在 local.md。
 
 原创 MoonBit 核心提供 inode/device/byte-range 对象、严格等待树解析、逐层阻塞 witness、根锁受影响规模与区间查询。JS FFI 只做宿主读取/参数/退出。没有拷贝 Linux、util-linux 或相邻 MoonBit 项目实现。OFD unknown owner、PID 0、未知类型、lease 状态、不溢出的 EOF 范围均明确表达。
 

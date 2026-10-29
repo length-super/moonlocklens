@@ -8,3 +8,9 @@
 __pycache__/
 /output/cli/
 /output/reports/
+
+/submission-proposal.md
+
+/output/pdf/
+
+/scripts/make_proposal_pdf.py

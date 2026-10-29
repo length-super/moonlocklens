@@ -29,4 +29,4 @@ jobs:
       - name: Consume published version from Mooncakes
         run: python scripts/verify_registry.py
         env:
-          MOONLOCKLENS_REGISTRY_VERSION: '0.3.0'
+          MOONLOCKLENS_REGISTRY_VERSION: '0.4.0'
