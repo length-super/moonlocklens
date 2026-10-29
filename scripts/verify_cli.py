@@ -26,7 +26,7 @@ def report(*args, **kwargs):
 
 
 def main():
-    assert "0.3.0" in call("--version")[0]
+    assert "0.4.0" in call("--version")[0]
     assert "capture OUTPUT" in call("--help")[0]
     assert "observed 6 | matched 6" in call("inspect", FIXTURE)[0]
     all_rows = report("inspect", FIXTURE)

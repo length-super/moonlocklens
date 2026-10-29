@@ -140,10 +140,34 @@ pub fn Snapshot::with_blockers(Self, ArrayView[Int]) -> Array[Entry] raise LockE
 pub struct TaskCapture {
   // private fields
 }
+pub fn TaskCapture::compare(Self, Self) -> TaskComparison raise LockError
 pub fn TaskCapture::record(Self, String) -> Unit raise LockError
 pub fn TaskCapture::report(Self) -> TaskReport raise LockError
 pub fn TaskCapture::sample_count(Self) -> Int
 pub fn TaskCapture::to_json(Self) -> Json
+
+pub(all) struct TaskChange {
+  pid : Int
+  start_ticks : String
+  change : String
+  before : String
+  after : String
+} derive(ToJson)
+pub fn TaskChange::to_json(Self) -> Json
+
+pub(all) struct TaskComparison {
+  root_pid : Int
+  root_start_ticks : String
+  evidence_complete : Bool
+  before_waiters : Int
+  after_waiters : Int
+  resolved_lock_waits : Int
+  new_lock_waits : Int
+  changes : Array[TaskChange]
+  issues : Array[String]
+} derive(ToJson)
+pub fn TaskComparison::to_json(Self) -> Json
+pub fn TaskComparison::to_markdown(Self) -> String
 
 pub(all) struct TaskFrameReport {
   elapsed_ms : Int64

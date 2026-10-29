@@ -38,3 +38,9 @@ max_consecutive_wait_samples 是同一进程身份连续采样中出现锁等待
 - [proc_pid_task(5)](https://man7.org/linux/man-pages/man5/proc_pid_task.5.html)：线程有独立状态，不能把 leader 状态当成全进程所有线程状态。
 
 依据于 2026-10-28 读取的官方 man-pages。此阶段为既有项目实质扩展，未复制外部工具实现，不把通用 Linux 诊断声称为生态空白。
+
+## 处理前后对比（0.4.0）
+
+在处理持锁者前后分别保存同一任务的会话，运行 `moonlocklens compare before.json after.json --markdown`，或使用 `--json` 接入自动化。比较每份会话最后一帧，列出同身份进程锁等待消失、新等待、状态或阻塞证据变化。
+
+比较要求 boot、procfs scope、根 PID 和 starttime 一致。子进程退出/不可见或 PID 复用分别记录，不计为已确认恢复。权限或目录缺口时 evidence_complete=false，恢复计数不作肯定结论；before/after 由参数顺序指定，不根据墙上时钟推断先后。

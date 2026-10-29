@@ -164,7 +164,7 @@ fn parse_options(input : ArrayView[String]) -> Options raise {
 ///|
 fn help() -> Unit {
   let text =
-    #|MoonLockLens 0.3.0 - Linux task wait and file-contention diagnostics
+    #|MoonLockLens 0.4.0 - Linux task wait and file-contention diagnostics
     #|
     #|  moonlocklens inspect FILE       Explain a saved /proc/locks capture
     #|  moonlocklens live               Inspect the current Linux procfs
@@ -174,6 +174,7 @@ fn help() -> Unit {
     #|  moonlocklens diagnose PID       Inspect a task and current descendants
     #|  moonlocklens watch PID --samples 10 --interval 500 --output incident.json
     #|  moonlocklens report incident.json [--markdown | --json]
+    #|  moonlocklens compare BEFORE.json AFTER.json [--json | --markdown]
     #|
     #|  FILE may be '-' for UTF-8 stdin; source LINE is 1-based.
     #|  KEY is hex-major:hex-minor:decimal-inode. Range endpoints are inclusive.

@@ -1,5 +1,8 @@
 ///|
 fn run(options : Options) -> Int32 raise {
+  if options.args.get(0) == Some("compare") {
+    return compare_command(options)
+  }
   if options.args.get(0) is Some(command) &&
     (command == "diagnose" || command == "watch" || command == "report") {
     return task_command(options)
@@ -27,7 +30,7 @@ fn run(options : Options) -> Int32 raise {
       return 0
     }
     ["--version"] => {
-      println("MoonLockLens 0.3.0")
+      println("MoonLockLens 0.4.0")
       return 0
     }
     ["inspect", path] => {

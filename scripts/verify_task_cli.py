@@ -40,6 +40,22 @@ def main():
                  ("report", FIXTURE, "--markdown", "--json")):
         run(*args, code=2)
     with tempfile.TemporaryDirectory(dir=ROOT / "release-local", prefix="task-cli-") as tmp:
+        before = Path(tmp) / "before.json"
+        after = Path(tmp) / "after.json"
+        original = json.loads(FIXTURE.read_text())
+        before_wire = {**original, "frames": [original["frames"][0]]}
+        after_wire = {**original, "frames": [{**original["frames"][-1], "elapsed_ms": "0"}]}
+        before.write_text(json.dumps(before_wire))
+        after.write_text(json.dumps(after_wire))
+        comparison = json.loads(run("compare", before, after, "--json").stdout)["comparison"]
+        assert comparison["resolved_lock_waits"] == 1 and comparison["evidence_complete"]
+        assert "final sample" in run("compare", before, after, "--markdown").stdout.decode()
+        assert json.loads(run("compare", "-", after, "--json", data=before.read_bytes()).stdout)["comparison"] == comparison
+        run("compare", "-", "-", code=2)
+        run("compare", before, after, "--samples", "2", code=2)
+        after_wire["frames"][0]["pid_namespace"] = "another-machine"
+        after.write_text(json.dumps(after_wire))
+        run("compare", before, after, "--json", code=1)
         path = Path(tmp) / "bad.json"
         bad = json.loads(FIXTURE.read_text())
         bad["frames"][1]["elapsed_ms"] = "0"
