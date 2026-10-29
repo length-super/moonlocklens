@@ -1,6 +1,6 @@
 # MoonLockLens 0.3.0 使用指南
 
-这是可直接解压使用的命令行工具。需要 Node.js 22 或更高版本；运行包不需要 MoonBit、Python、联网或安装第三方模块。
+从 [GitHub Release](https://github.com/length-super/moonlocklens/releases/tag/v0.3.0) 下载 `moonlocklens-0.3.0.zip` 并解压。这是可直接使用的命令行工具。需要 Node.js 22 或更高版本；运行包不需要 MoonBit、Python、联网或安装第三方模块。
 
 ## 任务等待诊断与报告
 

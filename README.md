@@ -1,5 +1,7 @@
 # MoonLockLens
 
+[源码仓库](https://github.com/length-super/moonlocklens) · [版本下载](https://github.com/length-super/moonlocklens/releases/tag/v0.3.0) · [Mooncakes 0.3.0](https://mooncakes.io/docs/length-super/moonlocklens@0.3.0)
+
 Linux 任务等待与文件争用诊断工具及 MoonBit 库。从一个任务 PID 出发，关联当前子进程、文件锁请求与外部阻塞者，连续采样并生成可回放的故障报告。核心为纯 MoonBit，零第三方运行模块依赖；Node.js 负责有界 procfs 读取、采样时钟与命令行 I/O。
 
 ## 从卡住的任务进入诊断
@@ -24,7 +26,7 @@ Windows 也能直接体验任务报告：
 
 ## 直接使用 0.3.0
 
-本地免编译运行包：`output/cli/moonlocklens-0.3.0.zip`；已解压版本在 `output/cli/moonlocklens-0.3.0/`。只需 Node.js 22+，无需安装 MoonBit/Python。完整操作说明见 [使用指南](docs/cli-guide.md)。
+从 [GitHub Release](https://github.com/length-super/moonlocklens/releases/tag/v0.3.0) 下载运行包。源码构建输出：`output/cli/moonlocklens-0.3.0.zip`；已解压版本在 `output/cli/moonlocklens-0.3.0/`。只需 Node.js 22+，无需安装 MoonBit/Python。完整操作说明见 [使用指南](docs/cli-guide.md)。
 
 在本项目根目录的 PowerShell 中直接试用：
 
@@ -77,7 +79,13 @@ Windows 若系统默认 MoonBit 较旧，本项目忽略目录中已准备独立
 
 ## 库接口
 
-`local/moonlocklens` 是本地开发模块名，正式 namespace 待指定。尚未发布到注册表；安装归档消费示例见 `scripts/verify_package.py`，不使用虚构 moon add 链接。
+模块名为 `length-super/moonlocklens`。在消费项目中安装确切版本：
+
+```sh
+moon add length-super/moonlocklens@0.3.0
+```
+
+归档消费验证见 `scripts/verify_package.py`；注册表消费验证见 `scripts/verify_registry.py`。
 
 ```moonbit
 let snapshot = @locks.parse(text)
@@ -93,7 +101,7 @@ let hits = snapshot.query_range(
 )
 ```
 
-调用包在 moon.pkg 中导入 `"local/moonlocklens" @locks`。根包拥有全部公开类型；`pkg.generated.mbti` 为实际编译器接口。`Snapshot` 的数组私有，查询返回独立数组，修改结果数组不会改变快照。错误类型为 `LockError::Invalid(line~, reason~)`；参数/预算错误 line 为 0。
+调用包在 moon.pkg 中导入 `"length-super/moonlocklens" @locks`。根包拥有全部公开类型；`pkg.generated.mbti` 为实际编译器接口。`Snapshot` 的数组私有，查询返回独立数组，修改结果数组不会改变快照。错误类型为 `LockError::Invalid(line~, reason~)`；参数/预算错误 line 为 0。
 
 ## 格式与语义
 
@@ -121,6 +129,6 @@ wait_chain 是内核记录的等待依赖，不是死锁证明。query_range 只
 - 设计与调研：根目录 project-proposal 及三份生态/竞争报告。
 - 验收与状态：`docs/acceptance-review.md`、`docs/release.md`、`docs/test-evidence/local.md`。
 
-本项目为原创 MIT 实现，规范与工具参考见 THIRD_PARTY.md；AI 说明见 docs/architecture.md。公开仓库、正式 namespace、发布和赛事报名均待用户另行指定。
+本项目为原创 MIT 实现，规范与工具参考见 THIRD_PARTY.md；AI 说明见 docs/architecture.md。发布目标由用户指定为 length-super；发布状态见 docs/release.md。赛事报名另行处理。
 
 Linux oracle 需要支持三类锁的 Linux 文件系统。WSL 的 Windows 文件盘可能将 flock 映射为 POSIX；本次使用私有 mount namespace 下的项目内 tmpfs 验证，详见本地证据。可通过 `MOONLOCKLENS_TEST_TMP` 指定项目 release-local 内的 Linux 文件系统目录。

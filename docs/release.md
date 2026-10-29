@@ -1,13 +1,11 @@
-# 本地交付 0.3.0
+# MoonLockLens 0.3.0 发布记录
 
-源码模块：local/moonlocklens，正式发布 namespace 待定。版本与本地归档一致，仓库地址未编造。
+2026-10-29 用户授权发布到 length-super。仓库：https://github.com/length-super/moonlocklens 。正式模块：length-super/moonlocklens@0.3.0。
 
-面向使用者的免编译运行包为 `output/cli/moonlocklens-0.3.0.zip`，已解压目录为 `output/cli/moonlocklens-0.3.0/`。包含 lib/main.cjs、Windows/POSIX 启动器、说明、许可和 synthetic fixture，共 8 个文件；只需要 Node.js 22+，不需要 MoonBit、Python或联网。Windows 与 Linux 均实际运行解包副本。
+GitHub CLI 已核验登录 length-super（ID 335513007）；本仓库后续提交 author/committer 使用 length-super 和 GitHub noreply。此前五次本地开发提交保留真实自动化身份与时间；首次公开以实际推送时间为准。
 
-库的源码归档由 `moon package` 生成 `_build/publish/local-moonlocklens-0.3.0.zip`，副本位于 `release-local/local-moonlocklens-0.3.0.zip`。实际文件数量和清单位于 release-local/package-files.json、package-evidence.json。独立消费者仅使用 ZIP 解包副本，不引用工作树；两个后端公共 API 和解包 CLI 均通过。
+发布准备包括：命名空间迁移、两个后端各 24 项核心测试、公开接口、Node 运行包、真实 Linux oracle、实际源码归档消费。GitHub 默认分支 CI 和 Mooncakes 注册表确切版本安装正在核验，完成结果写入 test-evidence/publishing.md。
 
-实际归档排除了 .git、.github、research、release-local、_build、target、tmp、output 和缓存。保留源码、接口、fixture、README、许可证、可复现检查脚本和必要说明。PDF 单独位于 output/pdf/submission-proposal.pdf，未进入库包；申报 Markdown 保留。
+运行包 moonlocklens-0.3.0.zip 包含 8 文件，只需 Node.js 22+；由 scripts/build_cli.py 构建。源码归档由 moon package 产生 length-super-moonlocklens-0.3.0.zip，排除 output、research、release-local、工具链、缓存与 Git 元数据；PDF 作为 GitHub 文档/Release 附件提供。
 
-本地 Git 保留调研、核心开发及本次实际使用改进的真实提交。作者为明确的本地自动化占位，人员身份尚未指定。运行包不含 source map/本机源码路径；原始网页、工具链、主机锁快照和账号台账不分发。
-
-后续发布需指定：仓库 owner/repo、真实 Git 贡献者信息、Mooncakes 账号与 namespace；随后核对公开 CI 默认分支 SHA、实际包清单和确切版本 registry 消费。用户当前仅授权本地保存，本次到本地交付停止。
+正式发布不包含赛事报名、群聊加入或官方审核。此前本地阶段证据保留原时间和临时模块名，不冒充当时已经发布。

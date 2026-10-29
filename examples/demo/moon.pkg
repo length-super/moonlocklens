@@ -1,5 +1,5 @@
 import {
-  "local/moonlocklens" @locks,
+  "length-super/moonlocklens" @locks,
 }
 
 pkgtype(kind: "executable")

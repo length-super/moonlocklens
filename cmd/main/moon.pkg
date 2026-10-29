@@ -1,7 +1,7 @@
 supported_targets = "js"
 
 import {
-  "local/moonlocklens" @locks,
+  "length-super/moonlocklens" @locks,
   "moonbitlang/core/string",
 }
 

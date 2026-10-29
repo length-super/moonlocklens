@@ -18,7 +18,7 @@ def run(*args, cwd=ROOT):
 
 def main():
     run("moon", "package")
-    archive = ROOT / "_build/publish/local-moonlocklens-0.3.0.zip"
+    archive = ROOT / "_build/publish/length-super-moonlocklens-0.3.0.zip"
     local = ROOT / "release-local/package-consumption"
     # Refuse replacing an unrelated directory. Reuse only the exact task-local path.
     assert local.resolve().parent == (ROOT / "release-local").resolve()
@@ -44,8 +44,8 @@ def main():
     consumer = local / "consumer"
     consumer.mkdir()
     (local / "moon.work").write_text('members = ["dependency", "consumer"]\n')
-    (consumer / "moon.mod").write_text('name = "local/locklens-consumer"\nversion = "0.0.1"\nimport { "local/moonlocklens@0.3.0" }\n')
-    (consumer / "moon.pkg").write_text('import { "local/moonlocklens" @locks } for "test"\n')
+    (consumer / "moon.mod").write_text('name = "local/locklens-consumer"\nversion = "0.0.1"\nimport { "length-super/moonlocklens@0.3.0" }\n')
+    (consumer / "moon.pkg").write_text('import { "length-super/moonlocklens" @locks } for "test"\n')
     (consumer / "consumer_test.mbt").write_text('''///|
 test "archive consumer sees public constructors and methods" {
   let s = @locks.parse("1: POSIX ADVISORY WRITE 1 08:01:42 0 EOF\\n1: -> POSIX ADVISORY WRITE 2 08:01:42 10 20")
